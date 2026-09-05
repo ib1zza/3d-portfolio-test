@@ -1,36 +1,40 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# MATTER — портфолио Михаила Пшеничного
 
-## Getting Started
+Живой WebGL-сайт на React Three Fiber: один непрерывный 3D-мир, кастомный скролл,
+переходы между страницами через порталы, шейдеры и эффекты в каждой секции.
 
-First, run the development server:
+Полный план работ — в [`plans/`](./plans/README.md). Начинать чтение оттуда.
+
+## Стек
+
+- Next.js 16 (App Router) + React 19, TypeScript strict
+- CSS Modules + CSS-переменные, без CSS-фреймворка
+- React Three Fiber 9 + three (появится на этапе 2)
+
+## Команды
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm run dev     # дев-сервер
+npm run build   # продакшен-сборка
+npm run lint    # eslint
+npx tsc --noEmit
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Структура
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```
+app/            роуты, метаданные, sitemap/robots
+src/content/    единственный источник данных: профиль, проекты, i18n, режиссура 3D
+src/ui/         DOM-компоненты: HUD, тема, SEO
+src/lib/        утилиты
+plans/          план реализации, 10 документов
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Ключевое правило: `src/content` не знает про three, `src/ui` не знает про Next-роутинг.
+Весь контент присутствует в SSR-разметке — сайт полностью читаем без JavaScript.
 
-## Learn More
+## Текущее состояние
 
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Этап 0 из [`plans/09-roadmap.md`](./plans/09-roadmap.md) завершён: работающее
+текстовое портфолио с резюме, кейсами проектов и контактами. WebGL-слой
+добавляется поверх, не ломая эту основу.

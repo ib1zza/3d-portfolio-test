@@ -1,0 +1,205 @@
+.page {
+  max-width: var(--content-max);
+  margin-inline: auto;
+  padding: clamp(7rem, 18vh, 11rem) clamp(var(--space-4), 5vw, var(--space-24))
+    var(--space-32);
+}
+
+.head {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  padding-bottom: var(--space-12);
+  border-bottom: 1px solid var(--line);
+}
+
+.title {
+  font-size: var(--step-5);
+}
+
+.summary {
+  font-size: var(--step-1);
+  color: var(--ink-muted);
+}
+
+.facts {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 11rem), 1fr));
+  gap: var(--space-6);
+  margin-top: var(--space-6);
+}
+
+.fact dd {
+  margin: 0;
+  font-size: var(--step-1);
+}
+
+.links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  margin-top: var(--space-4);
+}
+
+.linkButton {
+  display: inline-flex;
+  align-items: center;
+  min-height: 3rem;
+  padding-inline: var(--space-6);
+  border-radius: 999px;
+  background: var(--accent);
+  color: #08080b;
+  font-family: var(--font-mono);
+  font-size: var(--step--1);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  transition: transform var(--dur-fast) var(--ease-out);
+}
+
+.linkButton:hover {
+  transform: translateY(-2px);
+}
+
+.accessNote {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-3);
+  max-width: var(--measure);
+  margin-top: var(--space-4);
+  color: var(--ink-muted);
+}
+
+.ndaBadge {
+  padding: var(--space-1) var(--space-3);
+  border: 1px solid var(--accent);
+  border-radius: 999px;
+  color: var(--accent);
+  font-family: var(--font-mono);
+  font-size: var(--step--1);
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.section {
+  padding-block: clamp(var(--space-12), 10vh, var(--space-24));
+  border-bottom: 1px solid var(--line);
+}
+
+.sectionTitle {
+  font-family: var(--font-mono);
+  font-size: var(--step--1);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--ink-muted);
+  margin-bottom: var(--space-6);
+}
+
+.caseGrid,
+.twoCol {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 18rem), 1fr));
+  gap: var(--space-8);
+}
+
+.block {
+  border-top: 2px solid var(--accent);
+  padding-top: var(--space-4);
+}
+
+.blockTitle {
+  font-family: var(--font-mono);
+  font-size: var(--step--1);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--accent);
+  margin-bottom: var(--space-3);
+}
+
+.bullets {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  color: var(--ink-muted);
+}
+
+.bullets li {
+  position: relative;
+  padding-left: var(--space-6);
+}
+
+.bullets li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.7em;
+  width: var(--space-3);
+  height: 1px;
+  background: var(--accent);
+}
+
+.metrics {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 14rem), 1fr));
+  gap: var(--space-6);
+}
+
+.metric {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.metricValue {
+  font-family: var(--font-display);
+  font-size: var(--step-4);
+  line-height: 1;
+}
+
+.metricLabel {
+  font-family: var(--font-mono);
+  font-size: var(--step--1);
+  text-transform: uppercase;
+}
+
+/* Неподтверждённая цифра подаётся иначе, чем замер — это честность,
+   а не украшение. См. plans/06-content-model.md, раздел 4. */
+.metricNote {
+  font-family: var(--font-mono);
+  font-size: var(--step--1);
+  color: var(--ink-muted);
+  max-width: 24ch;
+}
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.chip {
+  padding: var(--space-2) var(--space-4);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  font-family: var(--font-mono);
+  font-size: var(--step--1);
+}
+
+.next {
+  padding-top: var(--space-16);
+}
+
+.nextLink {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.nextTitle {
+  font-size: var(--step-4);
+  transition: color var(--dur-base) var(--ease-out);
+}
+
+.nextLink:hover .nextTitle {
+  color: var(--accent);
+}

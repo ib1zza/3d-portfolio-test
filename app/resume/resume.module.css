@@ -1,0 +1,192 @@
+.sheet {
+  max-width: 52rem;
+  margin-inline: auto;
+  padding: clamp(6rem, 14vh, 9rem) var(--space-6) var(--space-16);
+  font-size: var(--step-0);
+  line-height: 1.55;
+}
+
+.head {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: var(--space-6);
+  padding-bottom: var(--space-6);
+  border-bottom: 2px solid var(--ink);
+}
+
+.name {
+  font-family: var(--font-display);
+  font-size: var(--step-3);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+}
+
+.role {
+  font-size: var(--step-1);
+  color: var(--accent);
+}
+
+.location,
+.contactLabel {
+  color: var(--ink-muted);
+}
+
+.contacts {
+  display: grid;
+  gap: var(--space-1);
+  font-family: var(--font-mono);
+  font-size: var(--step--1);
+}
+
+.contacts li {
+  display: flex;
+  gap: var(--space-3);
+}
+
+.contactLabel {
+  min-width: 5rem;
+}
+
+.contacts a {
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.summary {
+  margin-top: var(--space-6);
+  max-width: var(--measure);
+}
+
+.section {
+  margin-top: var(--space-12);
+}
+
+.sectionTitle {
+  font-family: var(--font-mono);
+  font-size: var(--step--1);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--ink-muted);
+  padding-bottom: var(--space-2);
+  margin-bottom: var(--space-6);
+  border-bottom: 1px solid var(--line);
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-8);
+}
+
+.entry {
+  break-inside: avoid;
+}
+
+.entryHead {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+
+.entryHead h3 {
+  font-size: var(--step-1);
+  font-weight: 600;
+}
+
+.period {
+  font-family: var(--font-mono);
+  font-size: var(--step--1);
+  color: var(--ink-muted);
+}
+
+.entryRole {
+  color: var(--accent);
+  margin-bottom: var(--space-2);
+}
+
+.bullets {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  margin-top: var(--space-2);
+}
+
+.bullets li {
+  position: relative;
+  padding-left: var(--space-4);
+}
+
+.bullets li::before {
+  content: "—";
+  position: absolute;
+  left: 0;
+  color: var(--ink-muted);
+}
+
+.stack,
+.links {
+  font-family: var(--font-mono);
+  font-size: var(--step--1);
+  color: var(--ink-muted);
+  margin-top: var(--space-2);
+}
+
+.links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-4);
+}
+
+.links a {
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.foot {
+  margin-top: var(--space-16);
+  padding-top: var(--space-6);
+  border-top: 1px solid var(--line);
+  font-family: var(--font-mono);
+  font-size: var(--step--1);
+}
+
+.foot a {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+/* --------------------------------------------------------------- Печать */
+
+@media print {
+  .sheet {
+    max-width: none;
+    padding: 0;
+    font-size: 10.5pt;
+    line-height: 1.4;
+  }
+
+  .section {
+    margin-top: 14pt;
+    break-inside: avoid;
+  }
+
+  .list {
+    gap: 10pt;
+  }
+
+  .foot {
+    display: none;
+  }
+
+  .role,
+  .entryRole {
+    color: inherit;
+  }
+
+  .sheet a {
+    text-decoration: none;
+  }
+}
