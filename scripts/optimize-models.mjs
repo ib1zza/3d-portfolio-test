@@ -1,5 +1,5 @@
 import { execFileSync } from "node:child_process";
-import { mkdirSync, readdirSync, statSync } from "node:fs";
+import { copyFileSync, mkdirSync, readdirSync, statSync } from "node:fs";
 import { join } from "node:path";
 
 /**
@@ -89,3 +89,20 @@ if (after / 1024 > BUDGET_KB) {
   console.error(`Бюджет моделей превышен: ${(after / 1024).toFixed(0)} КБ > ${BUDGET_KB} КБ`);
   process.exitCode = 1;
 }
+
+/**
+ * Шрифт для 3D-текста.
+ *
+ * troika (её использует drei/Text) по умолчанию грузит Roboto с
+ * fonts.gstatic.com — внешняя зависимость на критическом пути, из-за которой
+ * текст просто не появляется, если CDN недоступен. Кладём файл к себе.
+ *
+ * Формат именно woff, а не woff2: парсер troika читает ttf, otf и woff,
+ * поддержки woff2 в нём нет.
+ */
+mkdirSync("public/fonts", { recursive: true });
+copyFileSync(
+  "node_modules/@fontsource/unbounded/files/unbounded-latin-700-normal.woff",
+  "public/fonts/unbounded-latin-700.woff",
+);
+console.log("Шрифт для 3D-текста: public/fonts/unbounded-latin-700.woff");

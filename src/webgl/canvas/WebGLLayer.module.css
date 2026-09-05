@@ -27,7 +27,9 @@
   color: var(--ink-muted);
 }
 
+/* Родитель отключает pointer-events, а кнопке они нужны. */
 .lost button {
+  pointer-events: auto;
   padding: var(--space-2) var(--space-4);
   background: transparent;
   border: 1px solid var(--line);

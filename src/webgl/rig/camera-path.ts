@@ -13,14 +13,20 @@ export interface CameraKeyframe {
   fov: number;
 }
 
+/**
+ * Секции главной живут в одном пространстве вокруг начала координат
+ * (см. scenes/HomeScene.tsx), поэтому камера не улетает далеко, а облетает
+ * центр: меняются дистанция, высота и угол обзора. Резкие броски убирают
+ * ощущение непрерывности сильнее, чем добавляют динамики.
+ */
 export const CAMERA_KEYFRAMES: CameraKeyframe[] = [
-  { at: 0.0, position: [0, 0, 9], target: [0, 0, 0], fov: 38 },
-  { at: 0.12, position: [1.6, 0.4, 6], target: [0, 0, 0], fov: 34 },
-  { at: 0.28, position: [0, -0.6, 5], target: [0, -0.4, 0], fov: 40 },
-  { at: 0.45, position: [0, 0, 2.5], target: [0, 0, -12], fov: 55 },
-  { at: 0.62, position: [0, 0.8, 6], target: [0, 0, 0], fov: 36 },
-  { at: 0.82, position: [0, 0, 8], target: [0, 0, 0], fov: 32 },
-  { at: 1.0, position: [0, 0, 5.5], target: [0, 0, 0], fov: 40 },
+  { at: 0.0, position: [0, 0, 8.4], target: [0, 0, 0], fov: 38 },
+  { at: 0.18, position: [2.2, 0.6, 7.2], target: [0, 0, 0], fov: 36 },
+  { at: 0.36, position: [1.2, -0.9, 6.2], target: [0, 0, 0], fov: 40 },
+  { at: 0.54, position: [-2.4, 0.4, 6.8], target: [0, 0, 0], fov: 38 },
+  { at: 0.72, position: [-1.0, 1.4, 7.6], target: [0, 0, 0], fov: 35 },
+  { at: 0.88, position: [1.4, 0.2, 8.2], target: [0, 0, 0], fov: 34 },
+  { at: 1.0, position: [0, 0, 7.0], target: [0, 0, 0], fov: 38 },
 ];
 
 export const positionCurve = new CatmullRomCurve3(

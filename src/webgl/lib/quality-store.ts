@@ -1,6 +1,7 @@
 import { create } from "zustand";
 
 import {
+  AUTO_DOWNGRADE_FLOOR,
   detectTier,
   inspectDevice,
   lowerTier,
@@ -95,7 +96,10 @@ export const useQualityStore = create<QualityState>((set, get) => ({
     const now = Date.now();
     if (now - state.lastDowngradeAt < DOWNGRADE_COOLDOWN_MS) return;
 
-    const next = lowerTier(state.tier);
+    // Пол автопонижения: см. AUTO_DOWNGRADE_FLOOR. Раньше автоматика могла
+    // дойти до flat и снять WebGL со страницы насовсем — сцена просто
+    // исчезала при скролле, без объяснений и без возможности вернуть.
+    const next = lowerTier(state.tier, AUTO_DOWNGRADE_FLOOR);
     if (next === state.tier) return;
 
     set({

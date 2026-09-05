@@ -12,7 +12,9 @@ import {
 } from "@/src/content/profile";
 import { projectSections, projects } from "@/src/content/projects";
 import { getLocale } from "@/src/lib/locale";
+import { SectionMarker } from "@/src/motion/SectionMarker";
 import { PersonJsonLd } from "@/src/ui/seo/PersonJsonLd";
+import { HomeScene } from "@/src/webgl/scenes/HomeScene";
 
 import styles from "./page.module.css";
 
@@ -23,9 +25,11 @@ export default async function HomePage() {
   return (
     <main id="content" className={styles.page}>
       <PersonJsonLd locale={locale} />
+      <HomeScene />
 
-      {/* 01 — Hero. Позже сюда встанет ядро частиц, см. plans/04-scenes.md */}
+      {/* 01 — Hero. Ядро материи живёт в scenes/HeroCore.tsx */}
       <section className={styles.hero}>
+        <SectionMarker id="hero" />
         <p className="mono">{pick(profile.role, locale)}</p>
         <h1 className={`display ${styles.heroTitle}`}>{pick(profile.name, locale)}</h1>
         <p className={`mono ${styles.heroMeta}`}>
@@ -44,6 +48,7 @@ export default async function HomePage() {
 
       {/* 02 — Манифест */}
       <section className={styles.section} aria-labelledby="manifest">
+        <SectionMarker id="manifest" />
         <h2 id="manifest" className="visually-hidden">
           {t("section.manifest")}
         </h2>
@@ -58,6 +63,7 @@ export default async function HomePage() {
 
       {/* 03 — Направления */}
       <section className={styles.section} aria-labelledby="focus">
+        <SectionMarker id="focus" />
         <SectionHead id="focus" index="01" title={t("section.focus")} />
         <ul className={styles.focusGrid}>
           {focusAreas.map((area) => (

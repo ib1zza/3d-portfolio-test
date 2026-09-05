@@ -9,7 +9,6 @@ import { CameraRig } from "@/src/webgl/rig/CameraRig";
 import { SceneTunnel } from "@/src/webgl/tunnel";
 import { ContextLossGuard } from "./ContextLossGuard";
 import { PerformanceGovernor } from "./PerformanceGovernor";
-import { ScaffoldScene } from "./ScaffoldScene";
 
 import styles from "./WebGLLayer.module.css";
 
@@ -25,19 +24,9 @@ export function WebGLLayer() {
   const [contextLost, setContextLost] = useState(false);
 
   const handleContextLost = useCallback(() => setContextLost(true), []);
+  const handleContextRestored = useCallback(() => setContextLost(false), []);
 
   if (!ready || profile.tier === "flat") return null;
-
-  if (contextLost) {
-    return (
-      <div className={styles.lost} role="status">
-        <p>Графика приостановлена браузером.</p>
-        <button type="button" onClick={() => window.location.reload()}>
-          Восстановить
-        </button>
-      </div>
-    );
-  }
 
   // Компонент грузится через dynamic(..., { ssr: false }), поэтому рендерится
   // только на клиенте и document доступен уже на первом рендере.
@@ -55,15 +44,12 @@ export function WebGLLayer() {
         eventPrefix="client"
         shadows={profile.shadows}
       >
-        <ContextLossGuard onLost={handleContextLost} />
+        <ContextLossGuard onLost={handleContextLost} onRestored={handleContextRestored} />
 
         <PerformanceGovernor />
         <AdaptiveDpr pixelated={false} />
 
         <CameraRig />
-
-        {/* Заготовка сцены: заменяется реальными сценами на этапах 3–5. */}
-        <ScaffoldScene />
 
         {/* Полноэкранные сцены, объявленные страницами. */}
         <SceneTunnel.Out />
@@ -73,6 +59,20 @@ export function WebGLLayer() {
 
         <Preload all />
       </Canvas>
+
+      {/* Плашка рисуется поверх Canvas, а не вместо него. Размонтировать
+          canvas при потере контекста нельзя: событие webglcontextrestored
+          приходит именно на него, и снятый со страницы canvas уже никогда
+          не восстановится — пользователь останется без графики до
+          перезагрузки. */}
+      {contextLost && (
+        <div className={styles.lost} role="status" aria-hidden={false}>
+          <p>Графика приостановлена браузером и скоро вернётся.</p>
+          <button type="button" onClick={() => window.location.reload()}>
+            Перезагрузить
+          </button>
+        </div>
+      )}
     </div>
   );
 }

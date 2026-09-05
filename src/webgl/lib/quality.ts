@@ -122,7 +122,9 @@ export function inspectDevice(): DeviceReport {
     /iPad|iPhone|iPod/.test(ua) ||
     (ua.includes("Macintosh") && navigator.maxTouchPoints > 1);
 
-  // Освобождаем контекст сразу: браузеры держат жёсткий лимит на их количество.
+  // Освобождаем пробный контекст сразу. Браузер держит жёсткий лимит на их
+  // количество (в Chromium — 16 на процесс рендерера) и при переполнении
+  // убивает самый старый, то есть боевую сцену.
   gl?.getExtension("WEBGL_lose_context")?.loseContext();
 
   return {
@@ -169,7 +171,20 @@ export function detectTier(report: DeviceReport): Tier {
   return tier;
 }
 
-export function lowerTier(tier: Tier): Tier {
+/**
+ * Ниже этого тира автоматика не опускается никогда.
+ *
+ * `flat` полностью снимает WebGL со страницы, и вернуть его без перезагрузки
+ * нельзя. Такое решение допустимо только по объективным причинам — нет WebGL2,
+ * включён режим экономии трафика, пользователь просил меньше движения или
+ * сцена упала с ошибкой. Просадка FPS к ним не относится: замер занижен в
+ * первые секунды, в неактивной вкладке и на слабой встроенной графике, и
+ * платой за ошибку становится сайт вообще без графики.
+ */
+export const AUTO_DOWNGRADE_FLOOR: Tier = "medium";
+
+export function lowerTier(tier: Tier, floor: Tier = "flat"): Tier {
   const index = TIERS.indexOf(tier);
-  return TIERS[Math.min(index + 1, TIERS.length - 1)] ?? "flat";
+  const floorIndex = TIERS.indexOf(floor);
+  return TIERS[Math.min(index + 1, floorIndex)] ?? floor;
 }
