@@ -213,6 +213,13 @@ a {
   transform: translateY(0);
 }
 
+/* Контент лежит над WebGL-слоем. Без явного z-index позиционированный canvas
+   (z-index: 0) рисуется поверх непозиционированных блоков по порядку отрисовки. */
+main {
+  position: relative;
+  z-index: 1;
+}
+
 /* WebGL-слой никогда не участвует в снапшоте View Transitions:
    иначе живая сцена застынет кадром посреди перехода.
    См. plans/03-motion-scroll-transitions.md, раздел 3.1 */

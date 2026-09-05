@@ -4,6 +4,7 @@ import { Inter, JetBrains_Mono, Unbounded } from "next/font/google";
 import { Hud } from "@/src/ui/hud/Hud";
 import { ThemeScript } from "@/src/ui/theme/ThemeScript";
 import { getLocale } from "@/src/lib/locale";
+import { WebGLRoot } from "@/src/webgl/WebGLRoot";
 import { profile } from "@/src/content/profile";
 import { pick, translate } from "@/src/content/i18n";
 
@@ -77,6 +78,10 @@ export default async function RootLayout({
         <a className="skip-link" href="#contacts">
           {translate(locale, "a11y.skipToContacts")}
         </a>
+
+        {/* WebGL живёт в layout, а не на странице: так сцена переживает
+            смену роута и контекст не пересоздаётся. */}
+        <WebGLRoot />
 
         <Hud locale={locale} name={pick(profile.name, locale)} />
 
