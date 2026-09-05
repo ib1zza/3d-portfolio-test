@@ -155,11 +155,9 @@ export const projects: Project[] = [
         "Clothing ecommerce website with catalog, product pages, cart, gallery, " +
         "payment and delivery information.",
     },
-    // TODO(Михаил): подтвердить реальный стек проекта.
-    // В старых данных здесь были фичи (Ecommerce, Catalog, Cart), а не технологии —
-    // они перенесены в `features`. Пустой массив осознанно: лучше ничего,
-    // чем выдуманное. См. plans/06-content-model.md, раздел 4.
-    stack: [],
+    // В старых данных в этом поле лежали фичи (Ecommerce, Catalog, Cart),
+    // а не технологии — они перенесены в `features`. Стек подтверждён автором.
+    stack: ["Nuxt", "Vue", "TypeScript", "SCSS"],
     responsibilities: {
       ru: [
         "Верстал адаптивные ecommerce-страницы и переиспользуемые блоки карточек товара.",
