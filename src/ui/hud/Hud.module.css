@@ -9,6 +9,7 @@
   padding: 14px 4vw;
   background: var(--overlay);
   backdrop-filter: blur(12px);
+  view-transition-name: site-header;
 }
 .brand {
   display: flex;

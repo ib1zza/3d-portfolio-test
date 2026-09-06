@@ -1,0 +1,39 @@
+.layer {
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+  pointer-events: none;
+  opacity: 1;
+}
+
+.layer[data-cover="true"] {
+  pointer-events: auto;
+  background: #191b1b;
+}
+
+.plate {
+  position: fixed;
+  background: #191b1b;
+  background-size: cover;
+  background-position: top center;
+  will-change: top, left, width, height;
+}
+
+.title {
+  position: fixed;
+  z-index: 1;
+  margin: 0;
+  overflow: hidden;
+  font-family: var(--font-text);
+  font-weight: 500;
+  line-height: 0.9;
+  letter-spacing: -0.07em;
+  white-space: nowrap;
+  will-change: top, left, width, font-size, color;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .layer {
+    display: none;
+  }
+}

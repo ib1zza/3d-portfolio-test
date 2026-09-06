@@ -1,11 +1,11 @@
 "use client";
 
-import Link from "next/link";
 import { useEffect, useRef } from "react";
 
 import { pick, translate, type Locale } from "@/src/content/i18n";
 import { stages } from "@/src/content/stages";
 import type { Project } from "@/src/content/types";
+import { ProjectLink } from "@/src/motion/ProjectLink";
 import { registerSection } from "@/src/motion/section-registry";
 import { useSnapSections } from "@/src/motion/useSnapSections";
 import { REEL_SECTION, WorkScene } from "@/src/webgl/scenes/WorkScene";
@@ -38,7 +38,13 @@ export function WorkReel({ projects, locale }: { projects: Project[]; locale: Lo
 
       <ol ref={reel} className={styles.reel}>
         {projects.map((project, index) => (
-          <li key={project.id} className={styles.slide}>
+          <li
+            key={project.id}
+            className={styles.slide}
+            data-project-plate={project.id}
+            data-project-home={project.id}
+            data-project-image={project.images?.[0]?.src}
+          >
             <p className={`mono ${styles.counter}`}>
               {String(index + 1).padStart(2, "0")}
               <span className={styles.counterTotal}>
@@ -46,7 +52,9 @@ export function WorkReel({ projects, locale }: { projects: Project[]; locale: Lo
               </span>
             </p>
 
-            <h2 className={`display ${styles.slideTitle}`}>{project.title}</h2>
+            <h2 className={`display ${styles.slideTitle}`} data-project-title={project.id}>
+              {project.title}
+            </h2>
 
             <p className={styles.slideSummary}>{pick(project.summary, locale)}</p>
 
@@ -65,13 +73,14 @@ export function WorkReel({ projects, locale }: { projects: Project[]; locale: Lo
               </div>
             </dl>
 
-            <Link
+            <ProjectLink
+              projectId={project.id}
               href={`/work/${project.id}`}
               className={styles.open}
               style={{ "--accent": stages[project.id].accent } as React.CSSProperties}
             >
               {translate(locale, "project.open")}
-            </Link>
+            </ProjectLink>
           </li>
         ))}
       </ol>

@@ -2,25 +2,26 @@ import Link from "next/link";
 import type { Locale } from "@/src/content/types";
 import { switchLocale } from "@/src/lib/locale-actions";
 import { GraphicsSettings } from "./GraphicsSettings";
+import { HudBrand, HudWorkLink } from "./HudLinks";
 import styles from "./Hud.module.css";
 
 export function Hud({ locale, name }: { locale: Locale; name: string }) {
   const ru = locale === "ru";
   return (
     <header className={styles.hud}>
-      <Link href="/" className={styles.brand} aria-label={name}>
-        <span className={styles.mark} aria-hidden="true">
-          мп.
-        </span>
-        <span className={styles.name}>{name}</span>
-      </Link>
+      <HudBrand
+        name={name}
+        className={styles.brand}
+        markClass={styles.mark}
+        nameClass={styles.name}
+      />
       <nav
         className={styles.nav}
         aria-label={ru ? "Главная навигация" : "Main navigation"}
       >
-        <Link href="/#work" className={styles.link}>
+        <HudWorkLink href="/#work" className={styles.link}>
           {ru ? "Работы" : "Work"}
-        </Link>
+        </HudWorkLink>
         <Link href="/#about" className={styles.link}>
           {ru ? "Обо мне" : "About"}
         </Link>

@@ -4,6 +4,7 @@ import { contacts, profile } from "@/src/content/profile";
 import { projects } from "@/src/content/projects";
 import { pick } from "@/src/content/i18n";
 import { getLocale } from "@/src/lib/locale";
+import { ProjectLink } from "@/src/motion/ProjectLink";
 import { HomeScene } from "@/src/webgl/scenes/HomeScene";
 import { PersonJsonLd } from "@/src/ui/seo/PersonJsonLd";
 import styles from "./page.module.css";
@@ -19,7 +20,7 @@ export default async function HomePage({
   const variant = study === "vertical" || study === "wide" ? study : "asymmetric";
   const silkworm = projects.find((p) => p.id === "silkworm")!;
   return (
-    <main id="content" className={styles.page}>
+      <main id="content" className={styles.page}>
       <PersonJsonLd locale={locale} />
       <HomeScene
         study={variant}
@@ -72,16 +73,21 @@ export default async function HomePage({
           <span>2026 · Ecommerce</span>
         </div>
         <div className={styles.workHeading}>
-          <h2 id="silkworm-title">Silkworm</h2>
+          <h2 id="silkworm-title" data-project-title="silkworm" data-project-home="silkworm">
+            Silkworm
+          </h2>
           <p>
             {ru
               ? "От первого взгляда —\nдо своей вещи."
               : "From a first look\nto something of your own."}
           </p>
         </div>
-        <Link
+        <ProjectLink
+          projectId="silkworm"
           href="/work/silkworm"
           className={styles.mediaLink}
+          data-project-plate="silkworm"
+          data-project-home="silkworm"
           aria-label={ru ? "Открыть кейс Silkworm" : "Open the Silkworm case study"}
         >
           <Image
@@ -95,7 +101,7 @@ export default async function HomePage({
           <span className={styles.mediaCta}>
             {ru ? "Смотреть кейс" : "View case study"} ↗
           </span>
-        </Link>
+        </ProjectLink>
         <div className={styles.projectDetail}>
           <p className={styles.eyebrow}>
             {pick(silkworm.role, locale)}
@@ -107,9 +113,13 @@ export default async function HomePage({
             <p className={styles.contribution}>
               {pick(silkworm.responsibilities, locale)[0]}
             </p>
-            <Link href="/work/silkworm" className={styles.textLink}>
+            <ProjectLink
+              projectId="silkworm"
+              href="/work/silkworm"
+              className={styles.textLink}
+            >
               {ru ? "Задачи и решения" : "Process and contribution"} ↗
-            </Link>
+            </ProjectLink>
           </div>
         </div>
       </section>
@@ -122,9 +132,17 @@ export default async function HomePage({
         {projects
           .filter((p) => p.id !== "silkworm")
           .map((p, i) => (
-            <Link className={styles.indexRow} key={p.id} href={`/work/${p.id}`}>
+            <ProjectLink
+              className={styles.indexRow}
+              key={p.id}
+              projectId={p.id}
+              href={`/work/${p.id}`}
+              data-project-plate={p.id}
+              data-project-home={p.id}
+              data-project-image={p.images?.[0]?.src}
+            >
               <span>0{i + 2}</span>
-              <h3>{p.title}</h3>
+              <h3 data-project-title={p.id}>{p.title}</h3>
               <span className={styles.indexType}>
                 {p.availability === "nda"
                   ? ru
@@ -133,7 +151,7 @@ export default async function HomePage({
                   : pick(p.role, locale)}
               </span>
               <span aria-hidden="true">↗</span>
-            </Link>
+            </ProjectLink>
           ))}
       </section>
 
@@ -171,6 +189,6 @@ export default async function HomePage({
           <a href="#tension-hero">{ru ? "Наверх" : "Back to top"} ↑</a>
         </footer>
       </section>
-    </main>
+      </main>
   );
 }

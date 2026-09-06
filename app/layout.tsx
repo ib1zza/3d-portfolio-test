@@ -4,6 +4,7 @@ import { Inter, JetBrains_Mono } from "next/font/google";
 
 import { Hud } from "@/src/ui/hud/Hud";
 import { getLocale } from "@/src/lib/locale";
+import { ProjectHandoff } from "@/src/motion/ProjectHandoff";
 import { WebGLRoot } from "@/src/webgl/WebGLRoot";
 import { profile } from "@/src/content/profile";
 import { pick, translate } from "@/src/content/i18n";
@@ -75,6 +76,7 @@ export default async function RootLayout({
         <WebGLRoot />
 
         <Hud locale={locale} name={pick(profile.name, locale)} />
+        <ProjectHandoff />
 
         {children}
       </body>

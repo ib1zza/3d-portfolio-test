@@ -104,6 +104,12 @@
 html {
   -webkit-text-size-adjust: 100%;
   scroll-behavior: smooth;
+  scrollbar-width: none;
+}
+
+html::-webkit-scrollbar {
+  width: 0;
+  height: 0;
 }
 
 body {
@@ -231,6 +237,150 @@ main {
    См. plans/03-motion-scroll-transitions.md, раздел 3.1 */
 canvas {
   view-transition-name: none;
+}
+
+/* ------------------------------------------------------------------ *
+ * View Transitions: главная ↔ кейс.
+ * Картинка и название — shared elements; остальной кадр слегка
+ * уезжает по направлению навигации. HUD стоит на месте.
+ * ------------------------------------------------------------------ */
+
+::view-transition {
+  pointer-events: none;
+}
+
+::view-transition-old(root) {
+  display: none;
+}
+
+::view-transition-new(root) {
+  animation: none;
+}
+
+::view-transition-group(site-header) {
+  animation: none;
+  z-index: 100;
+}
+
+::view-transition-old(site-header) {
+  display: none;
+}
+
+::view-transition-new(site-header) {
+  animation: none;
+}
+
+::view-transition-group(.morph) {
+  animation-duration: 560ms;
+  animation-timing-function: var(--ease-out);
+  z-index: 10;
+}
+
+::view-transition-old(.morph),
+::view-transition-new(.morph) {
+  height: 100%;
+  object-fit: cover;
+  object-position: top center;
+}
+
+::view-transition-image-pair(.morph) {
+  animation-name: via-blur;
+}
+
+@keyframes via-blur {
+  30% {
+    filter: blur(4px);
+  }
+}
+
+::view-transition-group(.text-morph) {
+  animation-duration: 560ms;
+  animation-timing-function: var(--ease-out);
+  z-index: 11;
+}
+
+::view-transition-old(.text-morph) {
+  display: none;
+}
+
+::view-transition-new(.text-morph) {
+  animation: none;
+  object-fit: none;
+  object-position: left top;
+}
+
+html[data-handoff="pending"] [data-project-title],
+html[data-handoff="pending"] [data-project-plate] {
+  visibility: hidden;
+}
+
+html[data-handoff="pending"] [data-project-body] {
+  opacity: 0;
+}
+
+html[data-handoff="reveal"] [data-project-body] {
+  animation: handoff-body 1000ms var(--ease-out) both;
+}
+
+[data-handoff-ghost] {
+  visibility: hidden;
+}
+
+@keyframes handoff-body {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+::view-transition-old(.nav-forward) {
+  --slide-offset: -36px;
+  animation:
+    160ms ease-in both vt-fade reverse,
+    560ms var(--ease-out) both vt-slide reverse;
+}
+
+::view-transition-new(.nav-forward) {
+  --slide-offset: 36px;
+  animation:
+    220ms var(--ease-out) 160ms both vt-fade,
+    560ms var(--ease-out) both vt-slide;
+}
+
+::view-transition-old(.nav-back) {
+  --slide-offset: 36px;
+  animation:
+    160ms ease-in both vt-fade reverse,
+    560ms var(--ease-out) both vt-slide reverse;
+}
+
+::view-transition-new(.nav-back) {
+  --slide-offset: -36px;
+  animation:
+    220ms var(--ease-out) 160ms both vt-fade,
+    560ms var(--ease-out) both vt-slide;
+}
+
+@keyframes vt-fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes vt-slide {
+  from {
+    translate: 0 var(--slide-offset);
+  }
+  to {
+    translate: 0 0;
+  }
 }
 
 /* ------------------------------------------------------------------ *
