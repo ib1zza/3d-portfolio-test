@@ -1,0 +1,66 @@
+/* Появление текста и блоков.
+ *
+ * Скрытое состояние навешивается только под html[data-js]: без JS наблюдатель
+ * не запустится, и текст остался бы скрытым навсегда. Флаг ставит инлайн-скрипт
+ * в layout — до первой отрисовки, поэтому вспышки видимого текста нет.
+ */
+
+.mask {
+  display: inline-block;
+  overflow: hidden;
+  /* Компенсация подрезки: маска обрезает выносные элементы (у, р, д),
+     поэтому даём запас снизу и убираем его отрицательным margin. */
+  padding-bottom: 0.14em;
+  margin-bottom: -0.14em;
+  vertical-align: bottom;
+}
+
+.word {
+  display: inline-block;
+  will-change: transform;
+}
+
+.block {
+  will-change: transform, opacity;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  :global(html[data-js]) .word {
+    transform: translateY(110%);
+  }
+
+  :global(html[data-js]) .in .word {
+    animation: rise var(--dur-reveal, 900ms) var(--ease-out) both;
+    animation-delay: calc(var(--index, 0) * var(--stagger, 55ms));
+  }
+
+  :global(html[data-js]) .block {
+    opacity: 0;
+    transform: translateY(var(--shift, 2rem));
+  }
+
+  :global(html[data-js]) .block.in {
+    animation: lift var(--dur-reveal, 900ms) var(--ease-out) both;
+    animation-delay: var(--delay, 0ms);
+  }
+}
+
+@keyframes rise {
+  from {
+    transform: translateY(110%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+@keyframes lift {
+  from {
+    opacity: 0;
+    transform: translateY(var(--shift, 2rem));
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

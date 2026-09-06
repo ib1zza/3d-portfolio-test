@@ -1,14 +1,14 @@
 ﻿"use client";
 
-import { AdaptiveDpr, Preload, View } from "@react-three/drei";
+import { AdaptiveDpr, Preload } from "@react-three/drei";
 import { Canvas } from "@react-three/fiber";
 import { useCallback, useState } from "react";
 
 import { useQualityStore } from "@/src/webgl/lib/quality-store";
-import { CameraRig } from "@/src/webgl/rig/CameraRig";
 import { SceneTunnel } from "@/src/webgl/tunnel";
 import { ContextLossGuard } from "./ContextLossGuard";
 import { PerformanceGovernor } from "./PerformanceGovernor";
+import { PostFX } from "./PostFX";
 
 import styles from "./WebGLLayer.module.css";
 
@@ -49,13 +49,12 @@ export function WebGLLayer() {
         <PerformanceGovernor />
         <AdaptiveDpr pixelated={false} />
 
-        <CameraRig />
-
-        {/* Полноэкранные сцены, объявленные страницами. */}
+        {/* Полноэкранные сцены, объявленные страницами. Камеру ставит сама
+            сцена: путь по скроллу нужен главной, а витрине и миру проекта
+            нужна своя поза, и общий риг здесь только мешал бы. */}
         <SceneTunnel.Out />
 
-        {/* Локальные «окна» в 3D, привязанные к DOM-блокам. */}
-        <View.Port />
+        <PostFX />
 
         <Preload all />
       </Canvas>

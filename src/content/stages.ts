@@ -15,14 +15,14 @@ export const stages: Record<ProjectId, ProjectStage> = {
     model: {
       type: "gltf",
       src: "/models/cartoon-teeth-set.glb",
-      scale: 1.85,
-      position: [0, -0.3, 0],
+      fit: 1.9,
+      position: [0, -0.15, 0],
       rotation: [0, -Math.PI / 2, 0],
     },
     logo: {
       src: "/models/simplex.glb",
-      scale: 1.05,
-      position: [0, 0.95, 0],
+      fit: 1.3,
+      position: [0, 1.2, 0],
       rotationSpeed: 0.7,
     },
     // Плоскость сечения идёт по модели, из среза выезжают компоненты UI-кита.
@@ -38,15 +38,15 @@ export const stages: Record<ProjectId, ProjectStage> = {
     model: {
       type: "gltf",
       src: "/models/t-shirt.glb",
-      scale: 1.2,
-      position: [-0.4, -0.4, 0],
+      fit: 1.7,
+      position: [-0.35, -0.05, 0],
       rotation: [0, Math.PI, 0],
     },
-    extras: [{ src: "/models/cap.glb", scale: 0.65, position: [0.72, -0.42, 0] }],
+    extras: [{ src: "/models/cap.glb", fit: 0.75, position: [0.85, -0.5, 0.25] }],
     logo: {
       src: "/models/silkworm.glb",
-      scale: 0.75,
-      position: [0, 0.8, 0],
+      fit: 1.1,
+      position: [0, 1.2, 0],
       rotationSpeed: 0.65,
     },
     // Ткань колышется на шуме, свотчи переключают материал: шёлк / хлопок / деним.
@@ -62,8 +62,8 @@ export const stages: Record<ProjectId, ProjectStage> = {
     model: {
       type: "gltf",
       src: "/models/printer-scanner.glb",
-      scale: 2.2,
-      position: [0, -0.5, 0],
+      fit: 2,
+      position: [0, -0.1, 0],
       rotation: [0, 0, 0],
     },
     // Принтер печатает объект слой за слоем по прогрессу скролла,

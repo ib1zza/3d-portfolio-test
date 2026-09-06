@@ -2,11 +2,13 @@
 
 import { useFrame } from "@react-three/fiber";
 import { damp } from "maath/easing";
-import { useRef, useState } from "react";
+import { useRef } from "react";
 import type { Group, Mesh, MeshStandardMaterial } from "three";
 
+import { readHovered } from "@/src/motion/hover-store";
 import { sectionFocus } from "@/src/motion/section-registry";
 import { focusAreas } from "@/src/content/profile";
+import { SceneAnchor } from "@/src/webgl/rig/SceneAnchor";
 
 /**
  * Сцена 03 — направления работы. Пять объектов на орбите, по одному на
@@ -19,13 +21,14 @@ import { focusAreas } from "@/src/content/profile";
 const SHAPES = ["box", "octahedron", "torusKnot", "torus", "cone"] as const;
 const COLORS = ["#34e0c0", "#5a4bff", "#ffb347", "#ff3da6", "#5a4bff"] as const;
 
-const RADIUS = 3.1;
+const RADIUS = 1.45;
 
 /**
  * Орбита сдвинута вправо и вглубь: слева идёт колонка текста, а объекты,
  * пролетающие поверх заголовков, мешают их читать.
  */
-const ORBIT_POSITION: [number, number, number] = [2.6, -0.2, -2.4];
+const WIDE: [number, number, number] = [2.7, 0.1, -2.6];
+const NARROW: [number, number, number] = [0.35, 1.35, -4.2];
 
 export function FocusOrbit() {
   const group = useRef<Group>(null);
@@ -39,52 +42,59 @@ export function FocusOrbit() {
     group.current.scale.setScalar(scale.value);
     group.current.visible = scale.value > 0.01;
 
-    group.current.rotation.y += delta * 0.18;
+    const hovered = readHovered()?.startsWith("focus:");
+    group.current.rotation.y += delta * (hovered ? 0.06 : 0.16);
     // Орбита слегка наклонена: строго горизонтальное кольцо выглядит служебно.
     group.current.rotation.x = -0.22;
   });
 
   return (
-    <group ref={group} scale={0.001} position={ORBIT_POSITION}>
-      {focusAreas.map((area, i) => {
-        const angle = (i / focusAreas.length) * Math.PI * 2;
-        return (
-          <OrbitObject
-            key={area.id}
-            shape={SHAPES[i % SHAPES.length]!}
-            color={COLORS[i % COLORS.length]!}
-            position={[
-              Math.cos(angle) * RADIUS,
-              Math.sin(angle * 2) * 0.45,
-              Math.sin(angle) * RADIUS,
-            ]}
-          />
-        );
-      })}
-    </group>
+    <SceneAnchor wide={WIDE} narrow={NARROW}>
+      <group ref={group} scale={0.001}>
+        {focusAreas.map((area, i) => {
+          const angle = (i / focusAreas.length) * Math.PI * 2;
+          return (
+            <OrbitObject
+              key={area.id}
+              id={area.id}
+              shape={SHAPES[i % SHAPES.length]!}
+              color={COLORS[i % COLORS.length]!}
+              position={[
+                Math.cos(angle) * RADIUS,
+                Math.sin(angle * 2) * 0.45,
+                Math.sin(angle) * RADIUS,
+              ]}
+            />
+          );
+        })}
+      </group>
+    </SceneAnchor>
   );
 }
 
 function OrbitObject({
+  id,
   shape,
   color,
   position,
 }: {
+  id: string;
   shape: (typeof SHAPES)[number];
   color: string;
   position: [number, number, number];
 }) {
   const mesh = useRef<Mesh>(null);
   const material = useRef<MeshStandardMaterial>(null);
-  const [hovered, setHovered] = useState(false);
 
   useFrame((_, delta) => {
+    const hovered = readHovered() === `focus:${id}`;
+
     if (mesh.current) {
       mesh.current.rotation.x += delta * 0.4;
       mesh.current.rotation.y += delta * 0.55;
 
       const scale = { value: mesh.current.scale.x };
-      damp(scale, "value", hovered ? 1.45 : 1, 0.2, delta);
+      damp(scale, "value", hovered ? 1.55 : 1, 0.2, delta);
       mesh.current.scale.setScalar(scale.value);
     }
 
@@ -96,12 +106,7 @@ function OrbitObject({
   });
 
   return (
-    <mesh
-      ref={mesh}
-      position={position}
-      onPointerOver={() => setHovered(true)}
-      onPointerOut={() => setHovered(false)}
-    >
+    <mesh ref={mesh} position={position}>
       <Geometry shape={shape} />
       <meshStandardMaterial
         ref={material}

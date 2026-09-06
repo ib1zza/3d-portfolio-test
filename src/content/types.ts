@@ -142,8 +142,16 @@ export type SignatureEffect =
   | "metaballs"
   | "dragdrop";
 
+/**
+ * `fit` — желаемый размер модели по наибольшей стороне, в юнитах сцены.
+ *
+ * Именно размер, а не множитель: GLB приходят от разных авторов в разных
+ * единицах, от сантиметров до непонятных десятков тысяч (см. вывод
+ * scripts/inspect-models.mjs), и множитель пришлось бы подбирать под каждый
+ * файл заново. Пересчёт в реальный масштаб — в StageGltf.
+ */
 export type StageModel =
-  | { type: "gltf"; src: string; scale: number; position: Vec3; rotation: Vec3 }
+  | { type: "gltf"; src: string; fit: number; position: Vec3; rotation: Vec3 }
   | { type: "procedural"; scene: "metaballs" | "kanban" };
 
 export type Showcase =
@@ -157,8 +165,8 @@ export interface ProjectStage {
   accent: string;
   accentBg: string;
   model: StageModel;
-  extras?: Array<{ src: string; scale?: number; position?: Vec3; rotation?: Vec3 }>;
-  logo?: { src: string; scale?: number; position?: Vec3; rotationSpeed?: number };
+  extras?: Array<{ src: string; fit?: number; position?: Vec3; rotation?: Vec3 }>;
+  logo?: { src: string; fit?: number; position?: Vec3; rotationSpeed?: number };
   signature: SignatureEffect;
   /** Облако точек для GPGPU-морфинга, см. plans/08-asset-pipeline.md */
   pointCloud: string;

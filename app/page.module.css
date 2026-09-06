@@ -1,34 +1,98 @@
 .page {
   --gutter: clamp(var(--space-4), 5vw, var(--space-24));
+  padding-bottom: var(--space-32);
+  /* Крупный текст и уезжающие строки не должны давать горизонтальный скролл.
+     clip, а не hidden: hidden создаёт контекст скролла и ломает sticky. */
+  overflow-x: clip;
+}
+
+/* Размер, при котором самое длинное слово строки укладывается в ширину кадра.
+   --chars ставит React (см. fitChars в page.tsx), 1rem — запас на полосу
+   прокрутки. Множитель 0.86em — измеренная средняя ширина знака Unbounded 800
+   с трекингом -0.04em (замер по кириллице дал 0.83, остальное — запас на слова
+   из широких букв). */
+.page :where(.heroLine, .manifestLine, .contactsCta) {
+  --fit: calc((100vw - 2 * var(--gutter) - 1rem) / (var(--chars, 12) * 0.86));
+}
+
+/* Внутренние блоки центрируются сами, а не через max-width на .page:
+   бегущие строки должны идти от края до края кадра. */
+.page > section {
   max-width: var(--content-max);
   margin-inline: auto;
   padding-inline: var(--gutter);
-  padding-bottom: var(--space-32);
 }
 
-/* ---------------------------------------------------------------- Hero */
+/* ---------------------------------------------------------------- Герой */
 
 .hero {
+  position: relative;
   display: flex;
   flex-direction: column;
-  gap: var(--space-4);
-  min-height: 100dvh;
-  padding-top: clamp(6rem, 18vh, 12rem);
+  min-height: 100svh;
+  padding-top: clamp(7rem, 20vh, 13rem);
   padding-bottom: var(--space-16);
-  justify-content: center;
+}
+
+.heroRole {
+  color: var(--ink-muted);
 }
 
 .heroTitle {
+  display: flex;
+  flex-direction: column;
+  margin-block: var(--space-2) 0;
+}
+
+/* Имя набрано на пределе: заголовок должен упираться в края кадра, а не
+   аккуратно стоять в колонке. Вторая строка смещена — фамилия читается как
+   отдельный такт. */
+.heroLine {
+  display: block;
+  font-size: min(var(--step-7), var(--fit));
+  line-height: 0.86;
+  letter-spacing: -0.04em;
+  white-space: nowrap;
+}
+
+/* После замера JS снимает оценку и ставит точный кегль. До замера
+   data-fitted нет, и остаётся запасной min() выше. */
+.heroLine[data-fitted] {
+  font-size: var(--step-7);
+}
+
+.manifestLine[data-fitted],
+.contactsCta[data-fitted] {
   font-size: var(--step-5);
-  margin-block: var(--space-2) var(--space-1);
+}
+
+.heroLine:nth-child(2) {
+  align-self: flex-end;
+  text-align: right;
+}
+
+.squiggle {
+  width: clamp(9rem, 22vw, 18rem);
+  height: auto;
+  margin-top: var(--space-4);
+  color: var(--accent);
+}
+
+.heroFoot {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 20rem), 1fr));
+  align-items: end;
+  gap: var(--space-6) var(--space-12);
+  margin-top: auto;
+  padding-top: var(--space-12);
 }
 
 .heroMeta {
+  grid-column: 1 / -1;
   color: var(--ink-muted);
 }
 
 .heroSummary {
-  margin-top: var(--space-4);
   font-size: var(--step-1);
   color: var(--ink-muted);
 }
@@ -37,14 +101,21 @@
   display: flex;
   flex-wrap: wrap;
   gap: var(--space-3);
-  margin-top: var(--space-8);
+}
+
+.cue {
+  position: absolute;
+  left: 50%;
+  bottom: var(--space-6);
+  color: var(--ink-muted);
 }
 
 .buttonPrimary,
 .buttonGhost {
   display: inline-flex;
   align-items: center;
-  min-height: 3rem;
+  gap: var(--space-3);
+  min-height: 3.25rem;
   padding-inline: var(--space-6);
   border-radius: 999px;
   font-family: var(--font-mono);
@@ -52,9 +123,10 @@
   text-transform: uppercase;
   letter-spacing: 0.04em;
   transition:
-    transform var(--dur-fast) var(--ease-out),
-    background-color var(--dur-fast) var(--ease-out),
-    border-color var(--dur-fast) var(--ease-out);
+    transform var(--dur-base) var(--ease-out),
+    background-color var(--dur-base) var(--ease-out),
+    border-color var(--dur-base) var(--ease-out),
+    color var(--dur-base) var(--ease-out);
 }
 
 .buttonPrimary {
@@ -73,78 +145,143 @@
 
 .buttonGhost:hover {
   border-color: var(--accent);
+  color: var(--accent);
 }
 
-/* ------------------------------------------------------------ Секции */
+/* -------------------------------------------------------- Полоса стека */
 
-.section {
-  padding-block: clamp(var(--space-16), 12vh, var(--space-32));
-  border-top: 1px solid var(--line);
-}
-
-.sectionHead {
-  display: flex;
-  align-items: baseline;
-  gap: var(--space-4);
-  margin-bottom: var(--space-12);
-}
-
-.sectionTitle {
+.band {
+  margin-block: clamp(var(--space-8), 6vh, var(--space-16));
+  border-block: 1px solid var(--line);
+  padding-block: var(--space-4);
   font-family: var(--font-display);
   font-size: var(--step-3);
   font-weight: 600;
   letter-spacing: -0.02em;
 }
 
-.muted {
-  color: var(--ink-muted);
+.bandItem {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-8);
+  white-space: nowrap;
+}
+
+.bandDot {
+  display: block;
+  width: 0.45rem;
+  height: 0.45rem;
+  border-radius: 999px;
+  background: var(--accent);
+}
+
+/* ------------------------------------------------------------- Манифест */
+
+.manifestSection {
+  display: grid;
+  align-content: center;
+  min-height: 90svh;
 }
 
 .manifest {
   display: flex;
   flex-direction: column;
-  font-size: var(--step-4);
 }
 
 .manifestLine {
   display: block;
+  font-size: min(var(--step-5), var(--fit));
+  line-height: 1.02;
+  white-space: nowrap;
 }
 
+/* Ступенчатый отступ: строки читаются как три такта одной фразы. */
 .manifestLine:nth-child(2) {
-  padding-left: clamp(0rem, 8vw, 8rem);
+  padding-left: clamp(0rem, 10vw, 10rem);
 }
 
-.manifestLine:last-child {
+.manifestLine:nth-child(3) {
+  padding-left: clamp(0rem, 20vw, 20rem);
   color: var(--accent);
 }
 
-/* ---------------------------------------------------------- Направления */
+/* --------------------------------------------------------------- Секции */
 
-.focusGrid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 16rem), 1fr));
-  gap: var(--space-8);
+.section {
+  padding-block: clamp(var(--space-16), 14vh, var(--space-32));
 }
 
-.focusItem {
+.sectionRule {
+  display: block;
+  width: 100%;
+  height: 2px;
+  color: var(--line);
+}
+
+.sectionHead {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-4);
+  margin-block: var(--space-8) var(--space-16);
+}
+
+.sectionIndex {
+  color: var(--accent);
+}
+
+.sectionTitle {
+  font-family: var(--font-display);
+  font-size: var(--step-4);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+}
+
+.muted {
+  color: var(--ink-muted);
+}
+
+/* ----------------------------------------------------------- Направления */
+
+.focusList {
   display: flex;
   flex-direction: column;
-  gap: var(--space-2);
-  padding-top: var(--space-4);
-  border-top: 1px solid var(--line);
+}
+
+/* Ряд, а не карточка: у ряда есть только линия и воздух, и на светлом фоне
+   он не спорит со сценой за плотность. */
+.focusItem {
+  position: relative;
+  display: grid;
+  grid-template-columns: 4rem minmax(0, 1fr) minmax(0, 1.2fr);
+  align-items: start;
+  gap: var(--space-6);
+  padding-block: var(--space-8);
+}
+
+.focusRule {
+  position: absolute;
+  inset: auto 0 0 0;
+  height: 1px;
+  color: var(--line);
+}
+
+.focusIndex {
+  color: var(--ink-muted);
 }
 
 .focusTitle {
-  font-size: var(--step-1);
+  font-family: var(--font-display);
+  font-size: var(--step-2);
   font-weight: 600;
+  letter-spacing: -0.02em;
 }
 
-/* --------------------------------------------------------------- Опыт */
+/* ---------------------------------------------------------------- Опыт */
 
 .timeline {
   display: flex;
   flex-direction: column;
-  gap: var(--space-12);
+  gap: var(--space-16);
 }
 
 .job {
@@ -153,21 +290,29 @@
   gap: var(--space-6);
 }
 
+.jobPeriod {
+  position: sticky;
+  top: calc(var(--hud-size) + var(--space-8));
+  align-self: start;
+  color: var(--ink-muted);
+}
+
 .jobCompany {
   font-family: var(--font-display);
-  font-size: var(--step-2);
-  font-weight: 600;
+  font-size: var(--step-3);
+  font-weight: 700;
+  letter-spacing: -0.02em;
 }
 
 .jobRole {
   color: var(--accent);
-  margin-bottom: var(--space-4);
+  margin-bottom: var(--space-6);
 }
 
 .bullets {
   display: flex;
   flex-direction: column;
-  gap: var(--space-2);
+  gap: var(--space-3);
   max-width: var(--measure);
   color: var(--ink-muted);
 }
@@ -187,60 +332,72 @@
   background: var(--accent);
 }
 
-/* --------------------------------------------------------- Технологии */
+/* ----------------------------------------------------------- Технологии */
 
-.chips {
+.skillBands {
   display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-2);
+  flex-direction: column;
+  gap: var(--space-4);
 }
 
 .chip {
-  padding: var(--space-2) var(--space-4);
+  display: inline-flex;
+  align-items: center;
+  padding: var(--space-2) var(--space-5);
   border: 1px solid var(--line);
   border-radius: 999px;
   font-family: var(--font-mono);
   font-size: var(--step--1);
+  white-space: nowrap;
 }
 
-/* ------------------------------------------------------------ Проекты */
-
-.group + .group {
-  margin-top: var(--space-16);
-}
-
-.groupTitle {
-  font-family: var(--font-display);
-  font-size: var(--step-2);
-  font-weight: 600;
-}
+/* --------------------------------------------------------------- Работы */
 
 .projectList {
-  margin-top: var(--space-8);
   border-top: 1px solid var(--line);
 }
 
 .projectRow {
   display: grid;
-  grid-template-columns: minmax(0, 14rem) 6rem minmax(0, 1fr);
-  gap: var(--space-4);
-  align-items: baseline;
-  padding-block: var(--space-6);
+  grid-template-columns: 5rem minmax(0, 1fr) minmax(0, 1.1fr) auto;
+  align-items: center;
+  gap: var(--space-6);
+  padding-block: var(--space-8);
   border-bottom: 1px solid var(--line);
   transition:
     padding-inline var(--dur-base) var(--ease-out),
-    background-color var(--dur-base) var(--ease-out);
+    color var(--dur-base) var(--ease-out);
 }
 
 .projectRow:hover {
   padding-inline: var(--space-4);
-  background: var(--surface);
+  color: var(--accent);
+}
+
+.projectYear {
+  color: var(--ink-muted);
 }
 
 .projectTitle {
-  font-family: var(--font-display);
-  font-size: var(--step-1);
-  font-weight: 600;
+  font-size: var(--step-3);
+  letter-spacing: -0.02em;
+}
+
+.projectSummary {
+  color: var(--ink-muted);
+  font-size: var(--step-0);
+}
+
+.projectRow:hover .projectSummary {
+  color: inherit;
+}
+
+.projectArrow {
+  color: inherit;
+}
+
+.allWorks {
+  margin-top: var(--space-12);
 }
 
 /* --------------------------------------------- Результаты, образование */
@@ -254,7 +411,7 @@
 .eduList {
   display: flex;
   flex-direction: column;
-  gap: var(--space-6);
+  gap: var(--space-8);
 }
 
 .eduTitle {
@@ -262,47 +419,83 @@
   font-weight: 600;
 }
 
-/* ----------------------------------------------------------- Контакты */
+/* ------------------------------------------------------------- Контакты */
+
+.contactsSection {
+  display: grid;
+  align-content: center;
+  min-height: 85svh;
+  padding-block: var(--space-16);
+}
 
 .contactsCta {
-  font-size: var(--step-3);
-  margin-bottom: var(--space-8);
+  font-size: min(var(--step-5), var(--fit));
+  margin-bottom: var(--space-12);
 }
 
 .contactList {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 18rem), 1fr));
-  gap: var(--space-2);
+  border-top: 1px solid var(--line);
 }
 
 .contactLink {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
+  display: grid;
+  grid-template-columns: minmax(0, 10rem) minmax(0, 1fr) auto;
+  align-items: center;
   gap: var(--space-4);
-  min-height: 3.5rem;
-  padding: var(--space-4);
-  border: 1px solid var(--line);
-  border-radius: var(--radius-md);
+  padding-block: var(--space-6);
+  border-bottom: 1px solid var(--line);
   font-size: var(--step-1);
   transition:
-    border-color var(--dur-fast) var(--ease-out),
-    background-color var(--dur-fast) var(--ease-out);
+    padding-inline var(--dur-base) var(--ease-out),
+    color var(--dur-base) var(--ease-out);
 }
 
 .contactLink:hover {
-  border-color: var(--accent);
-  background: var(--surface);
+  padding-inline: var(--space-4);
+  color: var(--accent);
 }
 
-@media (max-width: 720px) {
+.contactHandle {
+  color: var(--ink-muted);
+}
+
+.contactLink:hover .contactHandle {
+  color: inherit;
+}
+
+@media (max-width: 60rem) {
+  .focusItem {
+    grid-template-columns: 3rem minmax(0, 1fr);
+  }
+
+  .focusItem p {
+    grid-column: 2;
+  }
+}
+
+@media (max-width: 48rem) {
+  .heroLine:nth-child(2) {
+    align-self: flex-start;
+    text-align: left;
+  }
+
   .job,
-  .projectRow {
+  .projectRow,
+  .contactLink {
     grid-template-columns: 1fr;
     gap: var(--space-2);
   }
 
-  .projectRow:hover {
+  .jobPeriod {
+    position: static;
+  }
+
+  .projectRow:hover,
+  .contactLink:hover {
     padding-inline: 0;
+  }
+
+  .projectArrow {
+    display: none;
   }
 }

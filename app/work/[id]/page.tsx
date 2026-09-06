@@ -6,6 +6,7 @@ import { pick, translate } from "@/src/content/i18n";
 import { getProject, projects } from "@/src/content/projects";
 import { stages } from "@/src/content/stages";
 import { getLocale } from "@/src/lib/locale";
+import { ProjectWorld } from "@/src/webgl/scenes/ProjectWorld";
 
 import styles from "./project.module.css";
 
@@ -55,6 +56,8 @@ export default async function ProjectPage({ params }: { params: Promise<Params> 
       className={styles.page}
       style={{ "--accent": stage.accent } as React.CSSProperties}
     >
+      <ProjectWorld stage={stage} />
+
       <header className={styles.head}>
         <p className="mono">
           {project.year} — {t(`kind.${project.kind}`)}

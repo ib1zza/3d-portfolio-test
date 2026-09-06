@@ -61,6 +61,8 @@ export const dictionaries = {
     "resume.backToSite": "На сайт",
 
     "contacts.cta": "Напишите — отвечу быстро",
+
+    "work.intro": "Пять проектов. Скролл ведёт от одного к другому.",
   },
 
   en: {
@@ -117,6 +119,8 @@ export const dictionaries = {
     "resume.backToSite": "Back to site",
 
     "contacts.cta": "Drop me a line — I reply fast",
+
+    "work.intro": "Five projects. Scroll moves from one to the next.",
   },
 } as const;
 

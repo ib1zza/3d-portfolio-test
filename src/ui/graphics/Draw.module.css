@@ -1,0 +1,77 @@
+/* SVG, рисующий себя штрихом.
+ *
+ * Приём один: длина контура уводится в dasharray, а смещение анимируется от
+ * полной длины к нулю — линия будто прочерчивается. Длина берётся в единицах
+ * viewBox через pathLength, поэтому её не нужно измерять в рантайме и она не
+ * зависит от масштаба.
+ */
+
+.path {
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 1;
+  stroke-dashoffset: 0;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  :global(html[data-js]) .path {
+    stroke-dashoffset: 1;
+  }
+
+  :global(html[data-js]) .in .path {
+    animation: draw var(--dur-draw, 1200ms) var(--ease-out) both;
+    animation-delay: var(--delay, 0ms);
+  }
+}
+
+@keyframes draw {
+  from {
+    stroke-dashoffset: 1;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+/* Стрелка в ссылках: уезжает и возвращается с другой стороны, как в
+   классической подсказке «перейти». Живёт на hover, а не на скролле. */
+.arrow {
+  overflow: hidden;
+  flex: none;
+}
+
+.arrowGroup {
+  transition: transform var(--dur-base) var(--ease-out);
+}
+
+:global(a:hover) .arrowGroup,
+:global(a:focus-visible) .arrowGroup {
+  transform: translateX(0.35em);
+}
+
+/* Подсказка скролла: точка едет вниз по линии и растворяется. */
+.cueDot {
+  transform-origin: center;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .cueDot {
+    animation: cue 2.4s var(--ease-out) infinite;
+  }
+}
+
+@keyframes cue {
+  0% {
+    transform: translateY(0);
+    opacity: 0;
+  }
+  30% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(22px);
+    opacity: 0;
+  }
+}

@@ -15,7 +15,12 @@ export interface QualityProfile {
   /** Симулировать частицы каждый кадр или через один. */
   simulationStride: 1 | 2;
   transmissionSamples: number;
-  livePortals: number;
+  /**
+   * Сколько миров проектов держим смонтированными одновременно на витрине.
+   * Каждый — свой GLB с материалами, и держать все живыми ради двух видимых
+   * значит платить видеопамятью за то, чего не видно.
+   */
+  activeWorlds: number;
   postfx: { bloom: boolean; dof: boolean; chromatic: boolean; noise: boolean };
   shadows: boolean;
   raymarchOctaves: number;
@@ -29,7 +34,7 @@ export const QUALITY_PROFILES: Record<Tier, QualityProfile> = {
     particleCount: 262_144,
     simulationStride: 1,
     transmissionSamples: 6,
-    livePortals: 3,
+    activeWorlds: 3,
     postfx: { bloom: true, dof: true, chromatic: true, noise: true },
     shadows: true,
     raymarchOctaves: 5,
@@ -41,7 +46,7 @@ export const QUALITY_PROFILES: Record<Tier, QualityProfile> = {
     particleCount: 131_072,
     simulationStride: 1,
     transmissionSamples: 2,
-    livePortals: 2,
+    activeWorlds: 3,
     postfx: { bloom: true, dof: false, chromatic: true, noise: true },
     shadows: true,
     raymarchOctaves: 3,
@@ -53,7 +58,9 @@ export const QUALITY_PROFILES: Record<Tier, QualityProfile> = {
     particleCount: 65_536,
     simulationStride: 2,
     transmissionSamples: 0,
-    livePortals: 0,
+    // Только мир в кадре: соседей не подгружаем заранее, они появятся при
+    // подходе. Витрина без единого мира не имеет смысла, поэтому не ноль.
+    activeWorlds: 1,
     postfx: { bloom: true, dof: false, chromatic: false, noise: false },
     shadows: false,
     raymarchOctaves: 0,
@@ -65,7 +72,7 @@ export const QUALITY_PROFILES: Record<Tier, QualityProfile> = {
     particleCount: 0,
     simulationStride: 2,
     transmissionSamples: 0,
-    livePortals: 0,
+    activeWorlds: 0,
     postfx: { bloom: false, dof: false, chromatic: false, noise: false },
     shadows: false,
     raymarchOctaves: 0,

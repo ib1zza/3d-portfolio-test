@@ -3,10 +3,16 @@
 import { Environment, Lightformer } from "@react-three/drei";
 
 import { useQualityStore } from "@/src/webgl/lib/quality-store";
+import { CameraRig } from "@/src/webgl/rig/CameraRig";
 import { SceneTunnel } from "@/src/webgl/tunnel";
+import { ContactBeacon } from "./ContactBeacon";
+import { ExperienceSpine } from "./ExperienceSpine";
 import { FocusOrbit } from "./FocusOrbit";
 import { HeroCore } from "./HeroCore";
 import { ManifestWords } from "./ManifestWords";
+import { ResultMarks } from "./ResultMarks";
+import { SkillRing } from "./SkillRing";
+import { WorkWave } from "./WorkWave";
 
 /**
  * Мир главной страницы. Все секции живут в одном пространстве вокруг начала
@@ -22,6 +28,10 @@ export function HomeScene() {
 
   return (
     <SceneTunnel.In>
+      {/* Камера едет по пути из camera-path: это приём главной страницы,
+          поэтому риг живёт здесь, а не в общем слое Canvas. */}
+      <CameraRig />
+
       <ambientLight intensity={0.45} />
       <directionalLight position={[4, 6, 5]} intensity={1.8} />
       <pointLight position={[-5, -2, 3]} intensity={14} color="#5a4bff" />
@@ -60,6 +70,11 @@ export function HomeScene() {
       <HeroCore />
       <ManifestWords />
       <FocusOrbit />
+      <ExperienceSpine />
+      <SkillRing />
+      <WorkWave />
+      <ResultMarks />
+      <ContactBeacon />
     </SceneTunnel.In>
   );
 }

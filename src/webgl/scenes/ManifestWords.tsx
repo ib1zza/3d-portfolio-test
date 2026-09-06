@@ -7,6 +7,7 @@ import { useRef, useState } from "react";
 import type { Group } from "three";
 
 import { sectionFocus } from "@/src/motion/section-registry";
+import { SceneAnchor } from "@/src/webgl/rig/SceneAnchor";
 
 /**
  * Сцена 02 — манифест. Технологии, на которых написан сайт, висят в воздухе
@@ -50,11 +51,15 @@ export function ManifestWords() {
   });
 
   return (
-    <group ref={group} scale={0.001}>
-      {WORDS.map((word) => (
-        <Word key={word.text} {...word} />
-      ))}
-    </group>
+    // Слова стоят справа от колонки текста; на вертикальном экране якорь
+    // сдвигает всю группу влево и вверх, где для них есть место.
+    <SceneAnchor wide={[0, 0, 0]} narrow={[-1.9, 1.1, -1]}>
+      <group ref={group} scale={0.001}>
+        {WORDS.map((word) => (
+          <Word key={word.text} {...word} />
+        ))}
+      </group>
+    </SceneAnchor>
   );
 }
 

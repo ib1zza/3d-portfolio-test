@@ -5,6 +5,7 @@ import Lenis from "lenis";
 import { useEffect } from "react";
 
 import { useQualityStore } from "@/src/webgl/lib/quality-store";
+import { setLenis } from "./lenis-instance";
 import { writeScroll } from "./scroll-store";
 
 /** Скорость Lenis приходит в px/кадр; делитель подобран так, чтобы 1.0 ≈ быстрый флик. */
@@ -59,6 +60,8 @@ export function SmoothScroll() {
       });
     });
 
+    setLenis(lenis);
+
     let lastFiberTick = 0;
 
     const stop = addEffect((time: number) => {
@@ -79,6 +82,7 @@ export function SmoothScroll() {
     return () => {
       stop();
       cancelAnimationFrame(watchdog);
+      setLenis(null);
       lenis.destroy();
     };
   }, [tier, reducedMotion, isMobile]);

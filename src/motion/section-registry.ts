@@ -73,6 +73,25 @@ export function hasSection(id: string): boolean {
 }
 
 /**
+ * Позиция внутри секции в «экранах»: 0 — верх секции у верха окна, 1 — окно
+ * проехало один экран вниз. Для лент, где один шаг скролла равен одному
+ * элементу: считать от `scrollY / innerHeight` нельзя, потому что над лентой
+ * стоит заголовок, и привязка к абсолютной позиции разъезжается от любого
+ * изменения отступов сверху.
+ */
+export function sectionSteps(id: string, steps: number): number {
+  const range = sections.get(id);
+  if (!range || steps <= 0) return 0;
+
+  const step = range.height / steps;
+  if (step <= 0) return 0;
+
+  const raw = (window.scrollY - range.top) / step;
+  const max = steps - 1;
+  return raw < 0 ? 0 : raw > max ? max : raw;
+}
+
+/**
  * Отладочный снимок реестра. Доступен как window.__sections() в dev: когда
  * объект секции не появляется в кадре, первым делом надо понять, видит ли
  * сцена вообще её границы.

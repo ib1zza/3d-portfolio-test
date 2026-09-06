@@ -1,0 +1,38 @@
+.marquee {
+  display: flex;
+  overflow: hidden;
+  /* Края растворяются: строка должна уезжать за кадр, а не обрываться. */
+  mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+  user-select: none;
+}
+
+.track {
+  display: flex;
+  flex: none;
+  align-items: center;
+  gap: var(--gap, var(--space-8));
+  padding-right: var(--gap, var(--space-8));
+  min-width: max-content;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .track {
+    animation: slide var(--duration, 30s) linear infinite;
+  }
+
+  .reverse .track {
+    animation-direction: reverse;
+  }
+
+  .marquee:hover .track {
+    animation-play-state: paused;
+  }
+}
+
+/* Сдвиг ровно на ширину одной копии: вторая копия к этому моменту стоит на
+   месте первой, поэтому стык не виден. Копии рендерит компонент. */
+@keyframes slide {
+  to {
+    transform: translateX(-100%);
+  }
+}
