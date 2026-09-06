@@ -1,35 +1,42 @@
 import Link from "next/link";
-
-import { translate } from "@/src/content/i18n";
 import type { Locale } from "@/src/content/types";
-import { ThemeToggle } from "@/src/ui/theme/ThemeToggle";
-
+import { switchLocale } from "@/src/lib/locale-actions";
+import { GraphicsSettings } from "./GraphicsSettings";
 import styles from "./Hud.module.css";
 
-/**
- * HUD живёт вне потока документа и не участвует в переходах между страницами.
- * На этапе 0 здесь навигация и тема; позже добавятся индикатор секции,
- * переключатель качества и языка (plans/01-concept.md, раздел 4.4).
- */
 export function Hud({ locale, name }: { locale: Locale; name: string }) {
+  const ru = locale === "ru";
   return (
     <header className={styles.hud}>
-      <Link href="/" className={styles.brand}>
-        <span className={styles.mark} aria-hidden="true" />
+      <Link href="/" className={styles.brand} aria-label={name}>
+        <span className={styles.mark} aria-hidden="true">
+          мп.
+        </span>
         <span className={styles.name}>{name}</span>
       </Link>
-
-      <nav className={styles.nav} aria-label={translate(locale, "nav.work")}>
-        <Link href="/work" className={styles.link}>
-          {translate(locale, "nav.work")}
+      <nav
+        className={styles.nav}
+        aria-label={ru ? "Главная навигация" : "Main navigation"}
+      >
+        <Link href="/#work" className={styles.link}>
+          {ru ? "Работы" : "Work"}
         </Link>
-        <Link href="/resume" className={styles.link}>
-          {translate(locale, "nav.resume")}
+        <Link href="/#about" className={styles.link}>
+          {ru ? "Обо мне" : "About"}
         </Link>
-        <a href="#contacts" className={styles.link}>
-          {translate(locale, "nav.contacts")}
-        </a>
-        <ThemeToggle label={translate(locale, "hud.theme")} />
+        <Link href="/#contacts" className={styles.link}>
+          {ru ? "Контакт" : "Contact"}
+        </Link>
+        <form action={switchLocale}>
+          <input type="hidden" name="locale" value={ru ? "en" : "ru"} />
+          <button
+            className={styles.language}
+            aria-label={ru ? "Switch to English" : "Переключить на русский"}
+          >
+            {ru ? "EN" : "RU"}
+          </button>
+        </form>
+        <GraphicsSettings locale={locale} />
       </nav>
     </header>
   );

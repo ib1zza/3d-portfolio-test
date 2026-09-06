@@ -16,7 +16,7 @@
   --accent-contrast: #ffffff;
 
   /* Типографика */
-  --font-display: var(--font-unbounded), "Trebuchet MS", sans-serif;
+  --font-display: var(--font-inter), system-ui, sans-serif;
   --font-text: var(--font-inter), system-ui, -apple-system, sans-serif;
   --font-mono: var(--font-mono-jb), ui-monospace, "SF Mono", Menlo, monospace;
 
@@ -255,4 +255,19 @@ canvas {
   ::view-transition-new(*) {
     animation: none !important;
   }
+}
+
+/* TENSION: one studio palette for the initial release. */
+:root,
+[data-theme="light"],
+[data-theme="dark"] {
+  --bg: #e9e5dd;
+  --ink: #191b1b;
+  --ink-muted: #595c56;
+  --surface: #f4f1e9;
+  --surface-2: #dedbd3;
+  --line: #b8b9b1;
+  --overlay: rgba(233, 229, 221, 0.92);
+  --accent: #536022;
+  color-scheme: light;
 }

@@ -1,501 +1,367 @@
 .page {
-  --gutter: clamp(var(--space-4), 5vw, var(--space-24));
-  padding-bottom: var(--space-32);
-  /* Крупный текст и уезжающие строки не должны давать горизонтальный скролл.
-     clip, а не hidden: hidden создаёт контекст скролла и ломает sticky. */
-  overflow-x: clip;
+  --paper: #e9e5dd;
+  --dark: #191b1b;
+  color: var(--dark);
 }
-
-/* Размер, при котором самое длинное слово строки укладывается в ширину кадра.
-   --chars ставит React (см. fitChars в page.tsx), 1rem — запас на полосу
-   прокрутки. Множитель 0.86em — измеренная средняя ширина знака Unbounded 800
-   с трекингом -0.04em (замер по кириллице дал 0.83, остальное — запас на слова
-   из широких букв). */
-.page :where(.heroLine, .manifestLine, .contactsCta) {
-  --fit: calc((100vw - 2 * var(--gutter) - 1rem) / (var(--chars, 12) * 0.86));
-}
-
-/* Внутренние блоки центрируются сами, а не через max-width на .page:
-   бегущие строки должны идти от края до края кадра. */
-.page > section {
-  max-width: var(--content-max);
-  margin-inline: auto;
-  padding-inline: var(--gutter);
-}
-
-/* ---------------------------------------------------------------- Герой */
-
 .hero {
-  position: relative;
-  display: flex;
-  flex-direction: column;
   min-height: 100svh;
-  padding-top: clamp(7rem, 20vh, 13rem);
-  padding-bottom: var(--space-16);
-}
-
-.heroRole {
-  color: var(--ink-muted);
-}
-
-.heroTitle {
+  position: relative;
   display: flex;
-  flex-direction: column;
-  margin-block: var(--space-2) 0;
+  align-items: center;
+  padding: 120px 4vw 110px;
+  isolation: isolate;
 }
-
-/* Имя набрано на пределе: заголовок должен упираться в края кадра, а не
-   аккуратно стоять в колонке. Вторая строка смещена — фамилия читается как
-   отдельный такт. */
-.heroLine {
-  display: block;
-  font-size: min(var(--step-7), var(--fit));
-  line-height: 0.86;
-  letter-spacing: -0.04em;
-  white-space: nowrap;
-}
-
-/* После замера JS снимает оценку и ставит точный кегль. До замера
-   data-fitted нет, и остаётся запасной min() выше. */
-.heroLine[data-fitted] {
-  font-size: var(--step-7);
-}
-
-.manifestLine[data-fitted],
-.contactsCta[data-fitted] {
-  font-size: var(--step-5);
-}
-
-.heroLine:nth-child(2) {
-  align-self: flex-end;
-  text-align: right;
-}
-
-.squiggle {
-  width: clamp(9rem, 22vw, 18rem);
-  height: auto;
-  margin-top: var(--space-4);
-  color: var(--accent);
-}
-
-.heroFoot {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 20rem), 1fr));
-  align-items: end;
-  gap: var(--space-6) var(--space-12);
-  margin-top: auto;
-  padding-top: var(--space-12);
-}
-
-.heroMeta {
-  grid-column: 1 / -1;
-  color: var(--ink-muted);
-}
-
-.heroSummary {
-  font-size: var(--step-1);
-  color: var(--ink-muted);
-}
-
-.heroActions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-3);
-}
-
-.cue {
+.poster {
   position: absolute;
-  left: 50%;
-  bottom: var(--space-6);
-  color: var(--ink-muted);
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
 }
-
-.buttonPrimary,
-.buttonGhost {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-3);
-  min-height: 3.25rem;
-  padding-inline: var(--space-6);
-  border-radius: 999px;
-  font-family: var(--font-mono);
-  font-size: var(--step--1);
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-  transition:
-    transform var(--dur-base) var(--ease-out),
-    background-color var(--dur-base) var(--ease-out),
-    border-color var(--dur-base) var(--ease-out),
-    color var(--dur-base) var(--ease-out);
-}
-
-.buttonPrimary {
-  background: var(--accent);
-  color: var(--accent-contrast);
-}
-
-.buttonGhost {
-  border: 1px solid var(--line);
-}
-
-.buttonPrimary:hover,
-.buttonGhost:hover {
-  transform: translateY(-2px);
-}
-
-.buttonGhost:hover {
-  border-color: var(--accent);
-  color: var(--accent);
-}
-
-/* -------------------------------------------------------- Полоса стека */
-
-.band {
-  margin-block: clamp(var(--space-8), 6vh, var(--space-16));
-  border-block: 1px solid var(--line);
-  padding-block: var(--space-4);
-  font-family: var(--font-display);
-  font-size: var(--step-3);
-  font-weight: 600;
-  letter-spacing: -0.02em;
-}
-
-.bandItem {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-8);
-  white-space: nowrap;
-}
-
-.bandDot {
-  display: block;
-  width: 0.45rem;
-  height: 0.45rem;
-  border-radius: 999px;
-  background: var(--accent);
-}
-
-/* ------------------------------------------------------------- Манифест */
-
-.manifestSection {
-  display: grid;
-  align-content: center;
-  min-height: 90svh;
-}
-
-.manifest {
-  display: flex;
-  flex-direction: column;
-}
-
-.manifestLine {
-  display: block;
-  font-size: min(var(--step-5), var(--fit));
-  line-height: 1.02;
-  white-space: nowrap;
-}
-
-/* Ступенчатый отступ: строки читаются как три такта одной фразы. */
-.manifestLine:nth-child(2) {
-  padding-left: clamp(0rem, 10vw, 10rem);
-}
-
-.manifestLine:nth-child(3) {
-  padding-left: clamp(0rem, 20vw, 20rem);
-  color: var(--accent);
-}
-
-/* --------------------------------------------------------------- Секции */
-
-.section {
-  padding-block: clamp(var(--space-16), 14vh, var(--space-32));
-}
-
-.sectionRule {
-  display: block;
+.poster img {
   width: 100%;
-  height: 2px;
-  color: var(--line);
+  height: 100%;
+  object-fit: cover;
 }
-
-.sectionHead {
-  display: flex;
-  align-items: baseline;
-  gap: var(--space-4);
-  margin-block: var(--space-8) var(--space-16);
+:global(html[data-tension-ready="true"]) .poster {
+  visibility: hidden;
 }
-
-.sectionIndex {
-  color: var(--accent);
+.heroCopy {
+  width: 60%;
+  padding-top: 8vh;
 }
-
-.sectionTitle {
-  font-family: var(--font-display);
-  font-size: var(--step-4);
-  font-weight: 700;
-  letter-spacing: -0.03em;
+.eyebrow {
+  font-size: 11px;
+  line-height: 1.8;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
 }
-
-.muted {
-  color: var(--ink-muted);
+.eyebrow span {
+  opacity: 0.65;
 }
-
-/* ----------------------------------------------------------- Направления */
-
-.focusList {
-  display: flex;
-  flex-direction: column;
+.name {
+  margin: 32px 0;
+  font-family: var(--font-text);
+  font-size: clamp(60px, 7.8vw, 132px);
+  font-weight: 500;
+  letter-spacing: -0.075em;
+  line-height: 0.98;
 }
-
-/* Ряд, а не карточка: у ряда есть только линия и воздух, и на светлом фоне
-   он не спорит со сценой за плотность. */
-.focusItem {
-  position: relative;
-  display: grid;
-  grid-template-columns: 4rem minmax(0, 1fr) minmax(0, 1.2fr);
-  align-items: start;
-  gap: var(--space-6);
-  padding-block: var(--space-8);
+.name span {
+  display: block;
 }
-
-.focusRule {
-  position: absolute;
-  inset: auto 0 0 0;
-  height: 1px;
-  color: var(--line);
+.intro {
+  max-width: 320px;
+  font-size: 19px;
+  line-height: 1.45;
+  margin-bottom: 30px;
 }
-
-.focusIndex {
-  color: var(--ink-muted);
-}
-
-.focusTitle {
-  font-family: var(--font-display);
-  font-size: var(--step-2);
-  font-weight: 600;
-  letter-spacing: -0.02em;
-}
-
-/* ---------------------------------------------------------------- Опыт */
-
-.timeline {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-16);
-}
-
-.job {
-  display: grid;
-  grid-template-columns: minmax(0, 14rem) minmax(0, 1fr);
-  gap: var(--space-6);
-}
-
-.jobPeriod {
-  position: sticky;
-  top: calc(var(--hud-size) + var(--space-8));
-  align-self: start;
-  color: var(--ink-muted);
-}
-
-.jobCompany {
-  font-family: var(--font-display);
-  font-size: var(--step-3);
-  font-weight: 700;
-  letter-spacing: -0.02em;
-}
-
-.jobRole {
-  color: var(--accent);
-  margin-bottom: var(--space-6);
-}
-
-.bullets {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-3);
-  max-width: var(--measure);
-  color: var(--ink-muted);
-}
-
-.bullets li {
-  position: relative;
-  padding-left: var(--space-6);
-}
-
-.bullets li::before {
-  content: "";
-  position: absolute;
-  left: 0;
-  top: 0.7em;
-  width: var(--space-3);
-  height: 1px;
-  background: var(--accent);
-}
-
-/* ----------------------------------------------------------- Технологии */
-
-.skillBands {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-4);
-}
-
-.chip {
+.cta {
   display: inline-flex;
   align-items: center;
-  padding: var(--space-2) var(--space-5);
-  border: 1px solid var(--line);
-  border-radius: 999px;
-  font-family: var(--font-mono);
-  font-size: var(--step--1);
-  white-space: nowrap;
+  gap: 48px;
+  border-bottom: 1px solid;
+  min-height: 48px;
+  font-size: 14px;
 }
-
-/* --------------------------------------------------------------- Работы */
-
-.projectList {
-  border-top: 1px solid var(--line);
-}
-
-.projectRow {
+.cta span {
+  background: #d8f36a;
+  width: 42px;
+  height: 42px;
   display: grid;
-  grid-template-columns: 5rem minmax(0, 1fr) minmax(0, 1.1fr) auto;
-  align-items: center;
-  gap: var(--space-6);
-  padding-block: var(--space-8);
-  border-bottom: 1px solid var(--line);
-  transition:
-    padding-inline var(--dur-base) var(--ease-out),
-    color var(--dur-base) var(--ease-out);
+  place-items: center;
+  font-size: 24px;
+  transition: transform 0.25s;
 }
-
-.projectRow:hover {
-  padding-inline: var(--space-4);
-  color: var(--accent);
+.cta:hover span {
+  transform: rotate(45deg);
 }
-
-.projectYear {
-  color: var(--ink-muted);
-}
-
-.projectTitle {
-  font-size: var(--step-3);
-  letter-spacing: -0.02em;
-}
-
-.projectSummary {
-  color: var(--ink-muted);
-  font-size: var(--step-0);
-}
-
-.projectRow:hover .projectSummary {
-  color: inherit;
-}
-
-.projectArrow {
-  color: inherit;
-}
-
-.allWorks {
-  margin-top: var(--space-12);
-}
-
-/* --------------------------------------------- Результаты, образование */
-
-.twoCol {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 22rem), 1fr));
-  gap: var(--space-12);
-}
-
-.eduList {
+.heroBottom {
+  position: absolute;
+  bottom: 30px;
+  left: 4vw;
+  right: 4vw;
   display: flex;
-  flex-direction: column;
-  gap: var(--space-8);
+  justify-content: space-between;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
 }
-
-.eduTitle {
-  font-size: var(--step-1);
-  font-weight: 600;
+.work {
+  background: #dedbd3;
+  padding: 48px 6vw 80px;
+  scroll-margin-top: 70px;
 }
-
-/* ------------------------------------------------------------- Контакты */
-
-.contactsSection {
-  display: grid;
-  align-content: center;
-  min-height: 85svh;
-  padding-block: var(--space-16);
-}
-
-.contactsCta {
-  font-size: min(var(--step-5), var(--fit));
-  margin-bottom: var(--space-12);
-}
-
-.contactList {
-  border-top: 1px solid var(--line);
-}
-
-.contactLink {
-  display: grid;
-  grid-template-columns: minmax(0, 10rem) minmax(0, 1fr) auto;
+.workTop {
+  display: flex;
+  justify-content: space-between;
   align-items: center;
-  gap: var(--space-4);
-  padding-block: var(--space-6);
-  border-bottom: 1px solid var(--line);
-  font-size: var(--step-1);
-  transition:
-    padding-inline var(--dur-base) var(--ease-out),
-    color var(--dur-base) var(--ease-out);
+  gap: 20px;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
 }
-
-.contactLink:hover {
-  padding-inline: var(--space-4);
-  color: var(--accent);
+.workTop h2 {
+  font-size: inherit;
+  font-weight: 400;
 }
-
-.contactHandle {
-  color: var(--ink-muted);
+.workHeading {
+  display: flex;
+  justify-content: space-between;
+  align-items: end;
+  gap: 30px;
+  margin: 50px 0 40px;
 }
-
-.contactLink:hover .contactHandle {
-  color: inherit;
+.workHeading h2 {
+  font-size: clamp(64px, 11vw, 170px);
+  font-weight: 500;
+  line-height: 0.9;
+  letter-spacing: -0.07em;
 }
-
-@media (max-width: 60rem) {
-  .focusItem {
-    grid-template-columns: 3rem minmax(0, 1fr);
-  }
-
-  .focusItem p {
-    grid-column: 2;
-  }
+.workHeading p {
+  white-space: pre-line;
+  font-size: 18px;
+  padding-bottom: 4px;
 }
-
-@media (max-width: 48rem) {
-  .heroLine:nth-child(2) {
-    align-self: flex-start;
-    text-align: left;
+.mediaLink {
+  display: block;
+  position: relative;
+  overflow: hidden;
+  background: #b7b9ba;
+}
+.projectImage {
+  width: 100%;
+  height: auto;
+  transition: transform 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.mediaLink:hover .projectImage {
+  transform: scale(1.025);
+}
+.mediaCta {
+  position: absolute;
+  right: 24px;
+  bottom: 24px;
+  background: #d8f36a;
+  color: #191b1b;
+  padding: 15px 25px;
+  font-size: 13px;
+}
+.projectDetail {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 32px;
+  margin-top: 36px;
+}
+.projectDetail > div {
+  max-width: 520px;
+}
+.contribution {
+  margin-top: 16px;
+  color: #565852;
+  font-size: 14px;
+}
+.textLink {
+  display: inline-block;
+  margin-top: 24px;
+  border-bottom: 1px solid;
+  padding: 10px 0;
+  font-size: 14px;
+}
+.index {
+  background: var(--paper);
+  padding: 70px 6vw 90px;
+}
+.index .workTop {
+  margin-bottom: 30px;
+}
+.indexRow {
+  display: grid;
+  grid-template-columns: 60px 1fr 1fr 30px;
+  align-items: center;
+  gap: 20px;
+  min-height: 116px;
+  border-top: 1px solid #b8b9b1;
+  transition: padding 0.25s;
+}
+.indexRow:hover {
+  padding-inline: 12px;
+}
+.indexRow > span {
+  font-size: 12px;
+}
+.indexRow h3 {
+  font-size: clamp(24px, 3vw, 44px);
+  font-weight: 500;
+  letter-spacing: -0.05em;
+}
+.indexType {
+  justify-self: end;
+}
+.about {
+  background: var(--paper);
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 40px;
+  padding: 80px 6vw 120px;
+  border-top: 1px solid #b8b9b1;
+  scroll-margin-top: 70px;
+}
+.about h2 {
+  font-size: clamp(34px, 5vw, 74px);
+  white-space: pre-line;
+  font-weight: 500;
+  line-height: 1.05;
+  letter-spacing: -0.055em;
+  margin-bottom: 30px;
+}
+.about > div > p {
+  max-width: 570px;
+}
+.contact {
+  background: #191b1b;
+  color: #e9e5dd;
+  padding: 65px 6vw 30px;
+  scroll-margin-top: 70px;
+}
+.contact h2 {
+  white-space: pre-line;
+  font-size: clamp(70px, 13vw, 200px);
+  font-weight: 500;
+  line-height: 0.95;
+  letter-spacing: -0.07em;
+  margin: 36px 0 55px;
+}
+.contactLinks {
+  display: flex;
+  gap: 40px;
+}
+.contactLinks a {
+  display: flex;
+  gap: 60px;
+  border-bottom: 1px solid #62645c;
+  padding: 14px 0;
+}
+.contactLinks a:hover {
+  color: #d8f36a;
+}
+.contact footer {
+  display: flex;
+  justify-content: space-between;
+  font-size: 11px;
+  margin-top: 80px;
+}
+@media (max-width: 700px) {
+  .hero {
+    padding: 52svh 5vw 95px;
+    min-height: 100svh;
+    align-items: start;
   }
-
-  .job,
-  .projectRow,
-  .contactLink {
-    grid-template-columns: 1fr;
-    gap: var(--space-2);
+  .heroCopy {
+    width: 100%;
+    padding: 0;
   }
-
-  .jobPeriod {
-    position: static;
+  .eyebrow {
+    font-size: 9px;
   }
-
-  .projectRow:hover,
-  .contactLink:hover {
-    padding-inline: 0;
-  }
-
-  .projectArrow {
+  .eyebrow span {
     display: none;
+  }
+  .name {
+    font-size: clamp(43px, 11.8vw, 80px);
+    margin: 18px 0;
+  }
+  .intro {
+    font-size: 15px;
+    max-width: 260px;
+    margin-bottom: 16px;
+  }
+  .cta {
+    min-height: 44px;
+    font-size: 12px;
+  }
+  .heroBottom {
+    font-size: 8px;
+    bottom: 22px;
+    left: 5vw;
+    right: 5vw;
+  }
+  .heroBottom > span:last-child {
+    display: none;
+  }
+  .work {
+    padding: 32px 5vw 45px;
+  }
+  .workTop {
+    font-size: 9px;
+  }
+  .workHeading {
+    display: block;
+    margin: 35px 0 25px;
+  }
+  .workHeading p {
+    margin-top: 20px;
+    font-size: 15px;
+  }
+  .mediaCta {
+    bottom: 12px;
+    right: 12px;
+    padding: 12px 16px;
+    font-size: 11px;
+  }
+  .projectDetail {
+    grid-template-columns: 1fr;
+    gap: 20px;
+    font-size: 15px;
+  }
+  .index {
+    padding: 50px 5vw;
+  }
+  .indexRow {
+    grid-template-columns: 24px 1fr 20px;
+    gap: 10px;
+    min-height: 92px;
+  }
+  .indexType {
+    display: none;
+  }
+  .about {
+    display: block;
+    padding: 50px 5vw 70px;
+  }
+  .about h2 {
+    margin-top: 25px;
+  }
+  .about > div > p {
+    font-size: 15px;
+  }
+  .contact {
+    padding: 45px 5vw 25px;
+  }
+  .contactLinks {
+    gap: 22px;
+    flex-wrap: wrap;
+  }
+  .contactLinks a {
+    gap: 25px;
+    font-size: 14px;
+  }
+  .contact footer {
+    gap: 20px;
+    margin-top: 55px;
+    font-size: 9px;
+  }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .heroCopy {
+    animation: enter 0.8s both;
+  }
+  @keyframes enter {
+    from {
+      opacity: 0;
+      transform: translateY(15px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
   }
 }

@@ -1,6 +1,7 @@
 "use client";
 
 import dynamic from "next/dynamic";
+import { usePathname } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 
 import { SmoothScroll } from "@/src/motion/SmoothScroll";
@@ -16,6 +17,10 @@ const WebGLLayer = dynamic(
 );
 
 export function WebGLRoot() {
+  const pathname = usePathname();
+  const reduced = useQualityStore((s) => s.device?.reducedMotion ?? false);
+  const allowCanvas = !reduced || pathname === "/";
+  const tier = useQualityStore((s) => s.tier);
   const initialize = useQualityStore((s) => s.initialize);
   const ready = useQualityStore((s) => s.ready);
   const setTier = useQualityStore((s) => s.setTier);
@@ -23,6 +28,14 @@ export function WebGLRoot() {
 
   useEffect(() => {
     initialize();
+    const query = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const update = () => {
+      const device = useQualityStore.getState().device;
+      if (device)
+        useQualityStore.setState({ device: { ...device, reducedMotion: query.matches } });
+    };
+    query.addEventListener("change", update);
+    return () => query.removeEventListener("change", update);
   }, [initialize]);
 
   useEffect(() => {
@@ -41,7 +54,7 @@ export function WebGLRoot() {
   return (
     <>
       <SmoothScroll />
-      {ready && idle && (
+      {ready && idle && tier !== "flat" && allowCanvas && (
         <WebGLBoundary onError={handleFailure}>
           <WebGLLayer />
         </WebGLBoundary>

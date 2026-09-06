@@ -2,6 +2,7 @@
 
 import { addEffect } from "@react-three/fiber";
 import Lenis from "lenis";
+import { usePathname } from "next/navigation";
 import { useEffect } from "react";
 
 import { useQualityStore } from "@/src/webgl/lib/quality-store";
@@ -18,6 +19,7 @@ const VELOCITY_SCALE = 40;
  * См. plans/03-motion-scroll-transitions.md, раздел 1.1.
  */
 export function SmoothScroll() {
+  const pathname = usePathname();
   const tier = useQualityStore((s) => s.tier);
   const reducedMotion = useQualityStore((s) => s.device?.reducedMotion ?? false);
   const isMobile = useQualityStore((s) => s.device?.isMobile ?? false);
@@ -25,7 +27,11 @@ export function SmoothScroll() {
   useEffect(() => {
     // На слабых устройствах и при reduced motion родной скролл честнее:
     // сглаживание там ощущается ватным, а не плавным.
-    const disabled = reducedMotion || tier === "flat" || (isMobile && tier === "medium");
+    const disabled =
+      pathname === "/" ||
+      reducedMotion ||
+      tier === "flat" ||
+      (isMobile && tier === "medium");
 
     if (disabled) {
       const onScroll = () => {
@@ -85,7 +91,7 @@ export function SmoothScroll() {
       setLenis(null);
       lenis.destroy();
     };
-  }, [tier, reducedMotion, isMobile]);
+  }, [tier, reducedMotion, isMobile, pathname]);
 
   return null;
 }

@@ -1,310 +1,176 @@
+import Image from "next/image";
 import Link from "next/link";
-
-import { pick, translate } from "@/src/content/i18n";
-import {
-  achievements,
-  contacts,
-  education,
-  experience,
-  focusAreas,
-  profile,
-  skills,
-} from "@/src/content/profile";
+import { contacts, profile } from "@/src/content/profile";
 import { projects } from "@/src/content/projects";
+import { pick } from "@/src/content/i18n";
 import { getLocale } from "@/src/lib/locale";
-import { Marquee } from "@/src/motion/Marquee";
-import { Reveal, RevealText } from "@/src/motion/Reveal";
-import { SectionMarker } from "@/src/motion/SectionMarker";
-import { Arrow, DrawLine, DrawSquiggle, ScrollCue } from "@/src/ui/graphics/Draw";
-import { PersonJsonLd } from "@/src/ui/seo/PersonJsonLd";
 import { HomeScene } from "@/src/webgl/scenes/HomeScene";
-
+import { PersonJsonLd } from "@/src/ui/seo/PersonJsonLd";
 import styles from "./page.module.css";
 
-/**
- * Главная. Одна история: имя — манифест — направления — опыт — работы — контакт
- * (plans/10-art-direction-v2.md, раздел 4).
- *
- * Секции полноэкранные и без непрозрачных фонов: фон кадра рисует сцена.
- * Текст появляется из-под маски при входе в кадр, линии секций
- * прочерчиваются — движение привязано к чтению, а не идёт само по себе.
- */
-export default async function HomePage() {
+export default async function HomePage({
+  searchParams,
+}: {
+  searchParams: Promise<{ study?: string; look?: string }>;
+}) {
   const locale = await getLocale();
-  const t = (key: Parameters<typeof translate>[1]) => translate(locale, key);
-
-  const featured = [...projects].sort((a, b) => a.priority - b.priority).slice(0, 3);
-
+  const ru = locale === "ru";
+  const { study, look } = await searchParams;
+  const variant = study === "vertical" || study === "wide" ? study : "asymmetric";
+  const silkworm = projects.find((p) => p.id === "silkworm")!;
   return (
     <main id="content" className={styles.page}>
       <PersonJsonLd locale={locale} />
-      <HomeScene />
-
-      {/* 01 — Герой. Сборка интерфейса живёт в scenes/HeroCore.tsx */}
-      <section className={styles.hero}>
-        <SectionMarker id="hero" />
-
-        <RevealText as="p" className={`mono ${styles.heroRole}`} text={pick(profile.role, locale)} />
-
-        <h1 className={styles.heroTitle}>
-          {pick(profile.name, locale)
-            .split(" ")
-            .map((word, index) => (
-              <RevealText
-                key={word}
-                as="span"
-                className={`display ${styles.heroLine}`}
-                text={word}
-                delay={index * 90}
-                fit
-                style={fitChars(word)}
-              />
-            ))}
-        </h1>
-
-        <DrawSquiggle className={styles.squiggle} delay={500} />
-
-        <Reveal className={styles.heroFoot} delay={400}>
-          <p className={`mono ${styles.heroMeta}`}>
-            Nuxt · Vue · React · TypeScript — {pick(profile.location, locale)}
+      <HomeScene
+        study={variant}
+        look={look === "silhouette" || look === "clay" ? look : "material"}
+      />
+      <section id="tension-hero" className={styles.hero} aria-labelledby="hero-title">
+        <picture className={styles.poster}>
+          <source media="(max-width: 700px)" srcSet="/scenes/hero/poster-mobile.webp" />
+          <img
+            src="/scenes/hero/poster-desktop.webp"
+            alt=""
+            width="1440"
+            height="900"
+            fetchPriority="high"
+          />
+        </picture>
+        <div className={styles.heroCopy}>
+          <p className={styles.eyebrow}>
+            {pick(profile.role, locale)}
+            <span> / {ru ? "Санкт-Петербург" : "Saint Petersburg"}</span>
           </p>
-          <p className={`prose ${styles.heroSummary}`}>{pick(profile.summary, locale)}</p>
-          <div className={styles.heroActions}>
-            <Link href="/work" className={styles.buttonPrimary}>
-              {t("nav.work")}
-              <Arrow />
-            </Link>
-            <Link href="/resume" className={styles.buttonGhost}>
-              {t("nav.resume")}
+          <h1 id="hero-title" className={styles.name}>
+            {pick(profile.name, locale)
+              .split(" ")
+              .map((word) => (
+                <span key={word}>{word} </span>
+              ))}
+          </h1>
+          <p className={styles.intro}>
+            {ru
+              ? "Разрабатываю интерфейсы, которые хочется исследовать."
+              : "I build interfaces that invite exploration."}
+          </p>
+          <a className={styles.cta} href="#work">
+            {ru ? "Смотреть работы" : "Explore work"}
+            <span aria-hidden="true">↘</span>
+          </a>
+        </div>
+        <div className={styles.heroBottom}>
+          <span>Nuxt · Vue · React · TypeScript</span>
+          <span>
+            {ru ? "Избранные работы" : "Selected work"} <span aria-hidden="true">↓</span>
+          </span>
+        </div>
+      </section>
+
+      <section id="work" className={styles.work} aria-labelledby="silkworm-title">
+        <div className={styles.workTop}>
+          <span>01 / {ru ? "Избранная работа" : "Selected work"}</span>
+          <span>2026 · Ecommerce</span>
+        </div>
+        <div className={styles.workHeading}>
+          <h2 id="silkworm-title">Silkworm</h2>
+          <p>
+            {ru
+              ? "От первого взгляда —\nдо своей вещи."
+              : "From a first look\nto something of your own."}
+          </p>
+        </div>
+        <Link
+          href="/work/silkworm"
+          className={styles.mediaLink}
+          aria-label={ru ? "Открыть кейс Silkworm" : "Open the Silkworm case study"}
+        >
+          <Image
+            src="/projects/silkworm/preview.webp"
+            alt={ru ? "Главная страница сайта Silkworm" : "Silkworm website home screen"}
+            width={1251}
+            height={1226}
+            sizes="(max-width: 700px) 92vw, 88vw"
+            className={styles.projectImage}
+          />
+          <span className={styles.mediaCta}>
+            {ru ? "Смотреть кейс" : "View case study"} ↗
+          </span>
+        </Link>
+        <div className={styles.projectDetail}>
+          <p className={styles.eyebrow}>
+            {pick(silkworm.role, locale)}
+            <br />
+            Nuxt / Vue / TypeScript / SCSS
+          </p>
+          <div>
+            <p>{pick(silkworm.summary, locale)}</p>
+            <p className={styles.contribution}>
+              {pick(silkworm.responsibilities, locale)[0]}
+            </p>
+            <Link href="/work/silkworm" className={styles.textLink}>
+              {ru ? "Задачи и решения" : "Process and contribution"} ↗
             </Link>
           </div>
-        </Reveal>
-
-        <ScrollCue className={styles.cue} />
-      </section>
-
-      {/* Полоса стека: первый признак того, что страница живая. */}
-      <Marquee className={styles.band} duration={38} label={skills.slice(0, 8).join(", ")}>
-        {skills.slice(0, 8).map((skill) => (
-          <span key={skill} className={styles.bandItem}>
-            {skill}
-            <i className={styles.bandDot} aria-hidden="true" />
-          </span>
-        ))}
-      </Marquee>
-
-      {/* 02 — Манифест */}
-      <section className={styles.manifestSection} aria-labelledby="manifest">
-        <SectionMarker id="manifest" />
-        <h2 id="manifest" className="visually-hidden">
-          {t("section.manifest")}
-        </h2>
-
-        <p className={styles.manifest}>
-          {pick(profile.manifest, locale).map((line, index) => (
-            <RevealText
-              key={line}
-              as="span"
-              className={`display ${styles.manifestLine}`}
-              text={line}
-              stagger={70}
-              delay={index * 60}
-              fit
-              style={fitChars(line)}
-            />
-          ))}
-        </p>
-      </section>
-
-      {/* 03 — Направления */}
-      <Section id="focus" index="01" title={t("section.focus")}>
-        <SectionMarker id="focus" />
-        <ol className={styles.focusList}>
-          {focusAreas.map((area, index) => (
-            <Reveal
-              as="li"
-              key={area.id}
-              className={styles.focusItem}
-              delay={index * 60}
-              hoverId={`focus:${area.id}`}
-            >
-              <span className={`mono ${styles.focusIndex}`}>
-                {String(index + 1).padStart(2, "0")}
-              </span>
-              <h3 className={styles.focusTitle}>{pick(area.title, locale)}</h3>
-              <p className={styles.muted}>{pick(area.description, locale)}</p>
-              <DrawLine className={styles.focusRule} delay={index * 60} />
-            </Reveal>
-          ))}
-        </ol>
-      </Section>
-
-      {/* 04 — Опыт */}
-      <Section id="experience" index="02" title={t("section.experience")}>
-        <SectionMarker id="experience" />
-        <ol className={styles.timeline}>
-          {experience.map((job, index) => (
-            <Reveal
-              as="li"
-              key={job.id}
-              className={styles.job}
-              delay={index * 80}
-              hoverId={`exp:${job.id}`}
-            >
-              <p className={`mono ${styles.jobPeriod}`}>{pick(job.period, locale)}</p>
-              <div>
-                <h3 className={styles.jobCompany}>{job.company}</h3>
-                <p className={styles.jobRole}>{pick(job.role, locale)}</p>
-                <ul className={styles.bullets}>
-                  {pick(job.highlights, locale).map((line) => (
-                    <li key={line}>{line}</li>
-                  ))}
-                </ul>
-              </div>
-            </Reveal>
-          ))}
-        </ol>
-      </Section>
-
-      {/* 05 — Технологии: две строки навстречу друг другу. */}
-      <Section id="skills" index="03" title={t("section.skills")}>
-        <SectionMarker id="skills" />
-        <div className={styles.skillBands}>
-          <Marquee duration={44} gap="var(--space-4)" label={skills.join(", ")}>
-            {skills.map((skill) => (
-              <span key={skill} className={styles.chip}>
-                {skill}
-              </span>
-            ))}
-          </Marquee>
-          <Marquee duration={52} gap="var(--space-4)" reverse>
-            {[...skills].reverse().map((skill) => (
-              <span key={skill} className={styles.chip} aria-hidden="true">
-                {skill}
-              </span>
-            ))}
-          </Marquee>
         </div>
-      </Section>
+      </section>
 
-      {/* 06 — Работы: три главных, остальное на витрине. */}
-      <Section id="work" index="04" title={t("section.work")}>
-        <SectionMarker id="work" />
-        <ul className={styles.projectList}>
-          {featured.map((project, index) => (
-            <Reveal as="li" key={project.id} delay={index * 70} hoverId={`work:${project.id}`}>
-              <Link href={`/work/${project.id}`} className={styles.projectRow}>
-                <span className={`mono ${styles.projectYear}`}>{project.year}</span>
-                <span className={`display ${styles.projectTitle}`}>{project.title}</span>
-                <span className={styles.projectSummary}>{pick(project.summary, locale)}</span>
-                <Arrow className={styles.projectArrow} size={18} />
-              </Link>
-            </Reveal>
+      <section className={styles.index} aria-labelledby="index-title">
+        <div className={styles.workTop}>
+          <h2 id="index-title">{ru ? "Ещё работы" : "More work"}</h2>
+          <Link href="/work">{ru ? "Все проекты" : "All projects"} ↗</Link>
+        </div>
+        {projects
+          .filter((p) => p.id !== "silkworm")
+          .map((p, i) => (
+            <Link className={styles.indexRow} key={p.id} href={`/work/${p.id}`}>
+              <span>0{i + 2}</span>
+              <h3>{p.title}</h3>
+              <span className={styles.indexType}>
+                {p.availability === "nda"
+                  ? ru
+                    ? "Коммерческий проект · NDA"
+                    : "Commercial project · NDA"
+                  : pick(p.role, locale)}
+              </span>
+              <span aria-hidden="true">↗</span>
+            </Link>
           ))}
-        </ul>
+      </section>
 
-        <Reveal className={styles.allWorks}>
-          <Link href="/work" className={styles.buttonGhost}>
-            {t("section.work")}
-            <Arrow />
+      <section id="about" className={styles.about}>
+        <p className={styles.eyebrow}>{ru ? "Обо мне" : "About"}</p>
+        <div>
+          <h2>
+            {ru
+              ? "Внимание к форме.\nТочность в коде."
+              : "An eye for form.\nPrecision in code."}
+          </h2>
+          <p>{pick(profile.summary, locale)}</p>
+          <Link href="/resume" className={styles.textLink}>
+            {ru ? "Опыт и резюме" : "Experience and résumé"} ↗
           </Link>
-        </Reveal>
-      </Section>
-
-      {/* 07 — Результаты и образование */}
-      <Section id="achievements" index="05" title={t("section.achievements")}>
-        <SectionMarker id="achievements" />
-        <div className={styles.twoCol}>
-          <ul className={styles.bullets}>
-            {pick(achievements, locale).map((line, index) => (
-              <Reveal as="li" key={line} delay={index * 60} hoverId={`ach:${index}`}>
-                {line}
-              </Reveal>
-            ))}
-          </ul>
-          <ul className={styles.eduList}>
-            {education.map((item, index) => (
-              <Reveal as="li" key={item.id} delay={index * 60}>
-                <p className="mono">{item.period}</p>
-                <h3 className={styles.eduTitle}>{pick(item.title, locale)}</h3>
-                <p className={styles.muted}>{pick(item.place, locale)}</p>
-              </Reveal>
-            ))}
-          </ul>
         </div>
-      </Section>
-
-      {/* 08 — Контакты */}
-      <section id="contacts" className={styles.contactsSection} aria-labelledby="contacts-title">
-        <SectionMarker id="contacts" />
-        <h2 id="contacts-title" className="visually-hidden">
-          {t("section.contacts")}
-        </h2>
-
-        <RevealText
-          as="p"
-          className={`display ${styles.contactsCta}`}
-          text={t("contacts.cta")}
-          stagger={70}
-          fit
-          style={fitChars(t("contacts.cta"))}
-        />
-
-        <ul className={styles.contactList}>
-          {contacts.map((contact, index) => (
-            <Reveal as="li" key={contact.label} delay={index * 60} hoverId={`contact:${contact.label}`}>
-              <a className={styles.contactLink} href={contact.href}>
-                <span className={styles.contactLabel}>{contact.label}</span>
-                <span className={`mono ${styles.contactHandle}`}>{contact.handle}</span>
-                <Arrow />
+      </section>
+      <section id="contacts" className={styles.contact}>
+        <p className={styles.eyebrow}>
+          {ru ? "Есть задача?" : "Have a project in mind?"}
+        </p>
+        <h2>{ru ? "Давайте\nобсудим." : "Let’s talk."}</h2>
+        <div className={styles.contactLinks}>
+          {contacts
+            .filter((c) => c.label !== "VK")
+            .map((c) => (
+              <a key={c.label} href={c.href}>
+                {c.label}
+                <span>↗</span>
               </a>
-            </Reveal>
-          ))}
-        </ul>
+            ))}
+        </div>
+        <footer>
+          <span>© 2026 {pick(profile.name, locale)}</span>
+          <a href="#tension-hero">{ru ? "Наверх" : "Back to top"} ↑</a>
+        </footer>
       </section>
     </main>
-  );
-}
-
-/**
- * Длина самого длинного слова в строке — в переменную --chars.
- *
- * Это оценка на первый кадр, пока не измерен настоящий текст: строка приходит
- * с сервера, а мерить ширину умеет только браузер. Дальше `useFitText`
- * подгоняет кегль по факту — оценка по числу символов ошибается на словах из
- * широких букв, но её достаточно, чтобы до замера страница не ушла в
- * горизонтальный скролл.
- */
-function fitChars(text: string): React.CSSProperties {
-  const longest = text
-    .split(/\s+/)
-    .reduce((max, word) => Math.max(max, word.length), 0);
-
-  return { "--chars": longest } as React.CSSProperties;
-}
-
-/** Секция с номером, прочерчивающейся линией и заголовком из-под маски. */
-function Section({
-  id,
-  index,
-  title,
-  children,
-}: {
-  id: string;
-  index: string;
-  title: string;
-  children: React.ReactNode;
-}) {
-  return (
-    <section className={styles.section} aria-labelledby={id}>
-      <DrawLine className={styles.sectionRule} />
-
-      <div className={styles.sectionHead}>
-        <span className={`mono ${styles.sectionIndex}`}>{index}</span>
-        <RevealText as="h2" id={id} className={styles.sectionTitle} text={title} />
-      </div>
-
-      {children}
-    </section>
   );
 }

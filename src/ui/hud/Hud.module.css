@@ -1,85 +1,104 @@
 .hud {
   position: fixed;
-  inset: 0 0 auto 0;
+  inset: 0 0 auto;
   z-index: 100;
   display: flex;
-  align-items: center;
   justify-content: space-between;
-  gap: var(--space-4);
-  padding: var(--space-4) clamp(var(--space-4), 4vw, var(--space-12));
+  align-items: center;
+  gap: 20px;
+  padding: 14px 4vw;
   background: var(--overlay);
   backdrop-filter: blur(12px);
-  border-bottom: 1px solid var(--line);
 }
-
 .brand {
-  display: inline-flex;
+  display: flex;
   align-items: center;
-  gap: var(--space-3);
-  font-family: var(--font-display);
-  font-weight: 700;
-  font-size: var(--step-0);
-  letter-spacing: -0.02em;
+  gap: 20px;
+  font-size: 12px;
 }
-
-/* Точка-«материя»: позже станет якорем, к которому стягиваются частицы */
 .mark {
-  width: 0.6rem;
-  height: 0.6rem;
-  border-radius: 999px;
-  background: var(--accent);
-  flex: none;
+  font-size: 27px;
+  font-weight: 700;
+  letter-spacing: -0.1em;
 }
-
 .nav {
   display: flex;
   align-items: center;
-  gap: clamp(var(--space-3), 2vw, var(--space-8));
+  gap: clamp(12px, 2.5vw, 38px);
 }
-
-.link {
-  position: relative;
-  font-family: var(--font-mono);
-  font-size: var(--step--1);
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-  color: var(--ink-muted);
-  transition: color var(--dur-fast) var(--ease-out);
+.link,
+.language {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  font-size: 11px;
 }
-
-.link::after {
-  content: "";
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: -0.35em;
-  height: 1px;
-  background: var(--accent);
-  transform: scaleX(0);
-  transform-origin: left;
-  transition: transform var(--dur-base) var(--ease-out);
-}
-
 .link:hover {
-  color: var(--ink);
+  text-decoration: underline;
+  text-underline-offset: 5px;
 }
-
-.link:hover::after {
-  transform: scaleX(1);
+.language {
+  border: 0;
+  background: none;
+  padding: 0 5px;
+  cursor: pointer;
 }
-
-@media print {
-  .hud {
-    display: none;
-  }
+.settings {
+  position: relative;
 }
-
-@media (max-width: 640px) {
+.settings summary {
+  cursor: pointer;
+  list-style: none;
+  min-width: 44px;
+  min-height: 44px;
+  display: grid;
+  place-items: center;
+  font-size: 22px;
+}
+.settings summary::-webkit-details-marker {
+  display: none;
+}
+.settings > div {
+  position: absolute;
+  right: 0;
+  top: 48px;
+  min-width: 190px;
+  padding: 20px;
+  background: #f4f1e9;
+  border: 1px solid #b8b9b1;
+}
+.settings label {
+  display: block;
+  margin-bottom: 10px;
+  font-size: 12px;
+}
+.settings select {
+  width: 100%;
+  min-height: 44px;
+  background: transparent;
+  border: 1px solid #b8b9b1;
+}
+@media (max-width: 700px) {
   .name {
     display: none;
   }
-
   .hud {
-    padding: var(--space-3) var(--space-4);
+    padding: 7px 5vw;
+    gap: 10px;
+  }
+  .nav {
+    gap: 12px;
+  }
+  .link,
+  .language {
+    font-size: 10px;
+  }
+  .settings summary {
+    min-width: 32px;
+  }
+}
+@media print {
+  .hud {
+    display: none;
   }
 }

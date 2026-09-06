@@ -40,7 +40,7 @@ function readStoredTier(): Tier | null {
     if (!raw) return null;
     const parsed = JSON.parse(raw) as { tier: Tier; until: number };
     if (parsed.until < Date.now()) return null;
-    return parsed.tier;
+    return ["ultra", "high", "medium", "flat"].includes(parsed.tier) ? parsed.tier : null;
   } catch {
     return null;
   }
@@ -71,7 +71,7 @@ export const useQualityStore = create<QualityState>((set, get) => ({
     const device = inspectDevice();
     const detectedTier = detectTier(device);
     const stored = readStoredTier();
-    const tier = stored ?? detectedTier;
+    const tier = !device.webgl2 || device.saveData ? "flat" : (stored ?? detectedTier);
 
     set({
       ready: true,

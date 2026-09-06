@@ -2,6 +2,7 @@
 
 import { AdaptiveDpr, Preload } from "@react-three/drei";
 import { Canvas } from "@react-three/fiber";
+import { usePathname } from "next/navigation";
 import { useCallback, useState } from "react";
 
 import { useQualityStore } from "@/src/webgl/lib/quality-store";
@@ -18,12 +19,16 @@ import styles from "./WebGLLayer.module.css";
  * См. plans/02-architecture.md, раздел 3.
  */
 export function WebGLLayer() {
+  const pathname = usePathname();
   const profile = useQualityStore((s) => s.profile);
   const ready = useQualityStore((s) => s.ready);
 
   const [contextLost, setContextLost] = useState(false);
 
-  const handleContextLost = useCallback(() => setContextLost(true), []);
+  const handleContextLost = useCallback(() => {
+    delete document.documentElement.dataset.tensionReady;
+    setContextLost(true);
+  }, []);
   const handleContextRestored = useCallback(() => setContextLost(false), []);
 
   if (!ready || profile.tier === "flat") return null;
@@ -37,8 +42,9 @@ export function WebGLLayer() {
     <div className={styles.layer} aria-hidden="true">
       <Canvas
         className={styles.canvas}
+        frameloop={pathname === "/" ? "demand" : "always"}
         dpr={[1, profile.maxDpr]}
-        gl={{ antialias: false, powerPreference: "high-performance", alpha: true }}
+        gl={{ antialias: true, powerPreference: "high-performance", alpha: true }}
         camera={{ position: [0, 0, 9], fov: 38, near: 0.1, far: 100 }}
         eventSource={eventSource}
         eventPrefix="client"
@@ -46,7 +52,7 @@ export function WebGLLayer() {
       >
         <ContextLossGuard onLost={handleContextLost} onRestored={handleContextRestored} />
 
-        <PerformanceGovernor />
+        {pathname !== "/" && <PerformanceGovernor />}
         <AdaptiveDpr pixelated={false} />
 
         {/* Полноэкранные сцены, объявленные страницами. Камеру ставит сама
@@ -54,7 +60,7 @@ export function WebGLLayer() {
             нужна своя поза, и общий риг здесь только мешал бы. */}
         <SceneTunnel.Out />
 
-        <PostFX />
+        {pathname !== "/" && <PostFX />}
 
         <Preload all />
       </Canvas>
